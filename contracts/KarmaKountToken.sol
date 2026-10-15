@@ -11,7 +11,7 @@ pragma solidity ^0.8.20;
  * - Decimals: 18
  * 
  * Genesis Allocation:
- * - 60% (600,000,000) -> Founder Genesis Reserve (skinrip@proton.me / @karmakount)
+ * - 60% (600,000,000) -> Founder Genesis Reserve (skinrip at proton.me / karmakount)
  * - 20% (200,000,000) -> DEX Liquidity Pool Reserve (Uniswap v3 / Aerodrome on Base)
  * - 20% (200,000,000) -> In-Game Faucet & IRL Gameplay Rewards Vault
  * 
