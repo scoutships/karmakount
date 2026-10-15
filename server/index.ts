@@ -526,7 +526,10 @@ app.post('/api/auth/login', async (req, res) => {
           virtuesLogged: 7,
           deedsWitnessed: 14,
           juryAccuracy: 100,
+          cryptoBalance: 600000000,
+          walletAddress: '0x3F5CE5FBFe3E9af3971dD833D26bA9b5C936f0bE',
           badges: [
+            { id: 'b-founder-whale', name: 'Genesis Whale (60% Supply)', icon: '🐋', description: 'Holds 600,000,000 $KARMA Founder Reserve', unlockedAt: new Date().toISOString() },
             { id: 'b-founder-001', name: 'Genesis Arbiter', icon: '👑', description: 'Architect of KarmaKount', unlockedAt: new Date().toISOString() }
           ],
           location: { name: 'Genesis Sanctuary', lat: 37.7749, lng: -122.4194 },
@@ -1165,6 +1168,112 @@ wss.on('connection', (ws) => {
   });
 });
 
+// ==================== TOKENOMICS & WEB3 REAL VALUE API ====================
+
+app.get('/api/tokenomics', (_req, res) => {
+  const totalSupply = 1_000_000_000;
+  const founderSupply = 600_000_000;
+  const dexLiquiditySupply = 200_000_000;
+  const inGameRewardsSupply = 200_000_000;
+
+  const totalClaimed = faucetClaims.reduce((sum, c) => sum + (c.amount || 0), 0);
+
+  res.json({
+    tokenName: 'KarmaKount',
+    symbol: '$KARMA',
+    contractStandard: 'ERC-20 (Base L2 & EVM Compatible)',
+    totalSupply,
+    decimals: 18,
+    distribution: {
+      founderGenesisWhale: {
+        amount: founderSupply,
+        percentage: 60,
+        owner: '@karmakount (skinrip@proton.me)',
+        description: 'Founder Genesis Reserve - The largest holding in existence'
+      },
+      dexLiquidity: {
+        amount: dexLiquiditySupply,
+        percentage: 20,
+        pool: 'Uniswap v3 / Aerodrome on Base',
+        description: 'Decentralized exchange automated market maker trading pair with ETH/USDC'
+      },
+      gameplayAndFaucet: {
+        amount: inGameRewardsSupply,
+        percentage: 20,
+        claimedSoFar: totalClaimed,
+        remainingVault: inGameRewardsSupply - totalClaimed,
+        description: 'IRL verified good deeds, peer jury rewards, and daily faucet drops'
+      }
+    },
+    burnMechanics: {
+      totalBurned: 1420,
+      burnFeatures: ['Aura Sigil Upgrades', 'Karmic Atonements', 'Disputed Cap Fines']
+    },
+    dexStatus: {
+      dex: 'Uniswap v3 (Base L2)',
+      network: 'Base Mainnet (Chain ID 8453)',
+      status: 'Ready for Initial Liquidity Seeding',
+      targetPairs: ['$KARMA / WETH', '$KARMA / USDC']
+    }
+  });
+});
+
+// Link or update a player's real Web3 wallet address
+app.post('/api/player/wallet', (req, res) => {
+  const { playerId, walletAddress } = req.body;
+  if (!playerId || !walletAddress) {
+    return res.status(400).json({ error: 'Player ID and wallet address required' });
+  }
+
+  const cleanAddress = walletAddress.trim();
+  if (!/^0x[a-fA-F0-9]{40}$/.test(cleanAddress) && !/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(cleanAddress)) {
+    return res.status(400).json({ error: 'Invalid Web3 (0x...) or Solana wallet address format' });
+  }
+
+  const player = players.find(p => p.id === playerId);
+  if (!player) {
+    return res.status(404).json({ error: 'Player not found' });
+  }
+
+  player.walletAddress = cleanAddress;
+  saveDb();
+  broadcast('PLAYER_UPDATED', player);
+  res.json({ success: true, player });
+});
+
+// Discord & Open Graph oEmbed API
+app.get('/api/oembed', (_req, res) => {
+  res.json({
+    version: '1.0',
+    type: 'rich',
+    title: 'KarmaKount — Massively Multiplayer IRL Game',
+    author_name: '⚡ The Cosmic Ledger // Live MMO IRL',
+    author_url: 'https://karmakount.com',
+    provider_name: 'KarmaKount',
+    provider_url: 'https://karmakount.com',
+    description: 'An online MMO IRL game where players log their good and bad deeds with other players from all over the globe. Vote on peer juries, claim $KARMA crypto rewards, and track your global karmic aura.',
+    thumbnail_url: 'https://karmakount.com/og-preview.jpg',
+    thumbnail_width: 1200,
+    thumbnail_height: 675
+  });
+});
+
+app.get('/og-preview.jpg', (_req, res) => {
+  const p = path.resolve('public/og-preview.jpg');
+  if (fs.existsSync(p)) return res.type('image/jpeg').send(fs.readFileSync(p));
+  const distImg = path.resolve('dist/og-preview.jpg');
+  if (fs.existsSync(distImg)) return res.type('image/jpeg').send(fs.readFileSync(distImg));
+  res.status(404).send('Image not found');
+});
+
+app.get('/og-preview.png', (_req, res) => {
+  const p = path.resolve('public/og-preview.png');
+  if (fs.existsSync(p)) return res.type('image/png').send(fs.readFileSync(p));
+  const distImg = path.resolve('dist/og-preview.png');
+  if (fs.existsSync(distImg)) return res.type('image/png').send(fs.readFileSync(distImg));
+  res.status(404).send('Image not found');
+});
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const distPath = path.resolve(__dirname, '../dist');
@@ -1175,7 +1284,48 @@ if (fs.existsSync(distPath)) {
     if (req.path.startsWith('/api') || req.path.startsWith('/ws')) {
       return next();
     }
-    res.sendFile(path.join(distPath, 'index.html'));
+
+    const indexPath = path.join(distPath, 'index.html');
+    if (!fs.existsSync(indexPath)) {
+      return res.sendFile(path.resolve('index.html'));
+    }
+
+    // Check if Discordbot / Twitterbot / Slackbot / Telegram / WhatsApp / crawler
+    const userAgent = (req.headers['user-agent'] || '').toLowerCase();
+    const isBot = /bot|crawler|spider|discord|twitter|slack|telegram|whatsapp|facebookexternalhit|metainspector|embedly/i.test(userAgent);
+
+    if (isBot) {
+      let html = fs.readFileSync(indexPath, 'utf-8');
+
+      // Dynamic deed embed if ?deed=
+      const deedId = req.query.deed as string;
+      if (deedId) {
+        const d = deeds.find(item => item.id === deedId);
+        if (d) {
+          const polarityEmoji = d.polarity === 'VIRTUE' ? '🕊️' : '🔥';
+          html = html
+            .replace(/<title>.*?<\/title>/, `<title>${polarityEmoji} ${d.title} // KarmaKount</title>`)
+            .replace(/content="KarmaKount — Massively Multiplayer IRL Game"/g, `content="${polarityEmoji} ${d.title} — KarmaKount"`)
+            .replace(/content="An online MMO IRL game where players log their good and bad deeds with other players from all over the globe[^"]*"/g, `content="${d.actorPlayerName}: ${d.description.replace(/"/g, "'")} (${d.karmaValue > 0 ? '+' : ''}${d.karmaValue} Karma)"`);
+        }
+      }
+
+      // Dynamic player profile embed if ?player=
+      const playerId = req.query.player as string;
+      if (playerId) {
+        const p = players.find(item => item.id === playerId || item.username.toLowerCase() === `@${playerId.replace(/^@/, '').toLowerCase()}`);
+        if (p) {
+          html = html
+            .replace(/<title>.*?<\/title>/, `<title>⚡ ${p.displayName} (@${p.username}) // KarmaKount Soul Record</title>`)
+            .replace(/content="KarmaKount — Massively Multiplayer IRL Game"/g, `content="⚡ ${p.displayName} (@${p.username}) — ${p.title}"`)
+            .replace(/content="An online MMO IRL game where players log their good and bad deeds with other players from all over the globe[^"]*"/g, `content="Level ${p.level} • ${p.karmaScore > 0 ? '+' : ''}${p.karmaScore} Karma Score • Faction: ${p.faction} • ${p.bio.replace(/"/g, "'")}"`);
+        }
+      }
+
+      return res.type('html').send(html);
+    }
+
+    res.sendFile(indexPath);
   });
 }
 

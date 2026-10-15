@@ -221,6 +221,13 @@
       "juryAccuracy": 100,
       "badges": [
         {
+          "id": "b-founder-whale",
+          "name": "Genesis Whale (60% Supply)",
+          "icon": "🐋",
+          "description": "Holds 600,000,000  Founder Reserve",
+          "unlockedAt": "2026-10-15T00:00:00.000Z"
+        },
+        {
           "id": "b-founder-001",
           "name": "Genesis Arbiter",
           "icon": "👑",
@@ -234,7 +241,9 @@
         "lng": -122.4194
       },
       "qrPayload": "KARMA_IRL:p-founder-karmakount:@karmakount",
-      "isOnline": true
+      "isOnline": true,
+      "cryptoBalance": 600000000,
+      "walletAddress": "0x3F5CE5FBFe3E9af3971dD833D26bA9b5C936f0bE"
     }
   ],
   "passwords": {

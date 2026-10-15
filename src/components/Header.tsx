@@ -1,6 +1,6 @@
 import React from 'react';
 import { Player, KarmicStats } from '../types';
-import { Scale, Volume2, VolumeX, QrCode, Shield, Sparkles, Flame, Users, Radio, LogIn, LogOut, UserCheck, Droplets } from 'lucide-react';
+import { Scale, Volume2, VolumeX, QrCode, Shield, Sparkles, Flame, Users, Radio, LogIn, LogOut, UserCheck, Droplets, Coins } from 'lucide-react';
 import { soundManager } from '../services/sound';
 
 interface HeaderProps {
@@ -14,6 +14,7 @@ interface HeaderProps {
   onOpenSigilModal: () => void;
   onOpenAuthModal: () => void;
   onOpenFaucetModal?: () => void;
+  onOpenTokenomicsModal?: () => void;
   onSignOut: () => void;
   isAuthenticated: boolean;
   isWsConnected: boolean;
@@ -32,6 +33,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenSigilModal,
   onOpenAuthModal,
   onOpenFaucetModal,
+  onOpenTokenomicsModal,
   onSignOut,
   isAuthenticated,
   isWsConnected,
@@ -220,9 +222,20 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="hidden sm:inline">Faucet</span>
               {typeof currentPlayer.cryptoBalance === 'number' && currentPlayer.cryptoBalance > 0 && (
                 <span className="text-[10px] font-mono bg-cyan-900/70 border border-cyan-700/50 px-1.5 py-0.2 rounded text-cyan-200">
-                  {currentPlayer.cryptoBalance} $K
+                  {currentPlayer.cryptoBalance > 1000000 ? `${(currentPlayer.cryptoBalance / 1000000).toFixed(0)}M` : `${currentPlayer.cryptoBalance}`} $K
                 </span>
               )}
+            </button>
+          )}
+
+          {onOpenTokenomicsModal && (
+            <button
+              onClick={onOpenTokenomicsModal}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-amber-500/40 bg-amber-950/40 hover:bg-amber-900/60 text-amber-300 text-xs font-semibold transition hover:border-amber-400 shadow-sm shadow-amber-500/10 active:scale-95"
+              title="$KARMA Tokenomics & Real Crypto Coin"
+            >
+              <Coins className="w-3.5 h-3.5 text-amber-400" />
+              <span className="hidden sm:inline">$KARMA Coin</span>
             </button>
           )}
 

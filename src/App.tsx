@@ -13,6 +13,7 @@ import { AuthModal } from './components/AuthModal';
 import { LoginPage } from './components/LoginPage';
 import { ShareModal } from './components/ShareModal';
 import { CryptoFaucetModal } from './components/CryptoFaucetModal';
+import { TokenomicsModal } from './components/TokenomicsModal';
 import { soundManager } from './services/sound';
 import { NativePlatformBridge } from './services/native';
 import { Sparkles, Flame, Shield, X, Bell } from 'lucide-react';
@@ -29,6 +30,7 @@ export const App: React.FC = () => {
   const [isSigilModalOpen, setIsSigilModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isFaucetModalOpen, setIsFaucetModalOpen] = useState(false);
+  const [isTokenomicsModalOpen, setIsTokenomicsModalOpen] = useState(false);
   const [shareData, setShareData] = useState<{
     isOpen: boolean;
     title: string;
@@ -486,6 +488,7 @@ export const App: React.FC = () => {
         onOpenSigilModal={() => setIsSigilModalOpen(true)}
         onOpenAuthModal={() => setIsAuthModalOpen(true)}
         onOpenFaucetModal={() => setIsFaucetModalOpen(true)}
+        onOpenTokenomicsModal={() => setIsTokenomicsModalOpen(true)}
         onSignOut={handleSignOut}
         isAuthenticated={isAuthenticated}
         isWsConnected={isWsConnected}
@@ -500,6 +503,7 @@ export const App: React.FC = () => {
           player={currentPlayer}
           onOpenSigilModal={() => setIsSigilModalOpen(true)}
           onOpenFaucet={() => setIsFaucetModalOpen(true)}
+          onOpenTokenomics={() => setIsTokenomicsModalOpen(true)}
           onSimulateEncounter={handleSimulateEncounter}
           onOpenAtonement={() => setActiveTab('quests')}
           onShareProfile={() => {
@@ -602,6 +606,19 @@ export const App: React.FC = () => {
         onClose={() => setIsFaucetModalOpen(false)}
         currentPlayer={currentPlayer}
         onOpenShare={(data) => setShareData({ isOpen: true, ...data })}
+      />
+
+      <TokenomicsModal
+        isOpen={isTokenomicsModalOpen}
+        onClose={() => setIsTokenomicsModalOpen(false)}
+        currentPlayer={currentPlayer}
+        onUpdateWallet={async (addr) => {
+          if (currentPlayer) {
+            const updated = { ...currentPlayer, walletAddress: addr };
+            setCurrentPlayer(updated);
+            setPlayers(prev => prev.map(p => p.id === updated.id ? updated : p));
+          }
+        }}
       />
     </div>
   );
