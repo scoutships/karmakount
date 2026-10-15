@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">KarmaKount</string>
+    <string name="title_activity_main">KarmaKount</string>
+    <string name="package_name">com.karmakount.app</string>
+    <string name="custom_url_scheme">com.karmakount.app</string>
+</resources>

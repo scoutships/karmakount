@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "KarmaKount // IRL MMO Ledger",
+  "version": "1.0.0",
+  "description": "Quick-log real-world deeds, track your live KarmaKount, and arbitrate peer claims from your browser.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "KarmaKount Quick Ledger",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "permissions": [
+    "storage",
+    "notifications"
+  ],
+  "host_permissions": [
+    "http://localhost:3001/*",
+    "http://localhost:5173/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}

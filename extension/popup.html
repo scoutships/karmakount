@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KarmaKount</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      width: 380px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #020617;
+      color: #f8fafc;
+      padding: 16px;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #1e293b;
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .logo-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #f59e0b, #9333ea, #e11d48);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 14px;
+      color: #020617;
+    }
+    .brand-name {
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: 0.5px;
+      color: #fbbf24;
+    }
+    .score-badge {
+      font-family: monospace;
+      font-size: 14px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 8px;
+      background: #0f172a;
+      border: 1px solid #334155;
+    }
+    .score-positive { color: #fbbf24; }
+    .score-negative { color: #f43f5e; }
+    
+    .player-card {
+      background: #0f172a;
+      border: 1px solid #1e293b;
+      border-radius: 12px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .player-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .player-avatar { font-size: 24px; }
+    .player-name { font-size: 13px; font-weight: 700; }
+    .player-title { font-size: 10px; color: #94a3b8; }
+    
+    .section-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #64748b;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    /* Quick log form */
+    .log-box {
+      background: #090d16;
+      border: 1px solid #1e293b;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 14px;
+    }
+    .polarity-toggle {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .polarity-btn {
+      padding: 6px;
+      border-radius: 8px;
+      border: 1px solid #334155;
+      background: #0f172a;
+      color: #94a3b8;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      transition: 0.2s;
+    }
+    .polarity-btn.active-virtue {
+      background: rgba(245, 158, 11, 0.15);
+      border-color: #f59e0b;
+      color: #fbbf24;
+    }
+    .polarity-btn.active-vice {
+      background: rgba(225, 29, 72, 0.15);
+      border-color: #e11d48;
+      color: #fb7185;
+    }
+    
+    input[type="text"] {
+      width: 100%;
+      background: #020617;
+      border: 1px solid #334155;
+      color: #f8fafc;
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      margin-bottom: 8px;
+      outline: none;
+    }
+    input[type="text"]:focus {
+      border-color: #f59e0b;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 8px;
+      border-radius: 8px;
+      border: none;
+      background: #f59e0b;
+      color: #020617;
+      font-weight: 800;
+      font-size: 12px;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+    .submit-btn:hover { background: #fbbf24; }
+    .submit-btn.vice-btn { background: #e11d48; color: #ffffff; }
+
+    /* Recent ticker */
+    .feed-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 160px;
+      overflow-y: auto;
+      margin-bottom: 12px;
+    }
+    .feed-item {
+      background: #0f172a;
+      border-left: 3px solid #f59e0b;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 11px;
+    }
+    .feed-item.vice-item { border-left-color: #e11d48; }
+    .feed-title { font-weight: 700; color: #f1f5f9; }
+    .feed-meta { font-size: 10px; color: #64748b; margin-top: 2px; }
+
+    .footer-link {
+      display: block;
+      text-align: center;
+      padding: 8px;
+      background: #1e293b;
+      color: #cbd5e1;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      transition: 0.2s;
+    }
+    .footer-link:hover {
+      background: #334155;
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="brand">
+      <div class="logo-icon">KK</div>
+      <span class="brand-name">KarmaKount</span>
+    </div>
+    <div id="karmaScore" class="score-badge score-positive">+0 PTS</div>
+  </div>
+
+  <div class="player-card">
+    <div class="player-info">
+      <div id="playerAvatar" class="player-avatar">⚡</div>
+      <div>
+        <div id="playerName" class="player-name">Connecting...</div>
+        <div id="playerTitle" class="player-title">IRL Cosmic Ledger</div>
+      </div>
+    </div>
+    <div id="playerStatus" style="font-size: 10px; color: #10b981; font-weight: 700;">LIVE SYNC</div>
+  </div>
+
+  <div class="section-title">Quick Deed Logger</div>
+  <div class="log-box">
+    <div class="polarity-toggle">
+      <button type="button" id="btnVirtue" class="polarity-btn active-virtue">🕊️ Virtue (+35)</button>
+      <button type="button" id="btnVice" class="polarity-btn">🔥 Vice (-35)</button>
+    </div>
+    <input type="text" id="deedTitle" placeholder="What deed did you do or witness?" />
+    <button type="button" id="btnSubmit" class="submit-btn">+ Inscribe Deed</button>
+  </div>
+
+  <div class="section-title">Latest IRL Deeds</div>
+  <div id="feedContainer" class="feed-list">
+    <div style="font-size: 11px; color: #64748b; text-align: center; padding: 10px;">Loading ledger feed...</div>
+  </div>
+
+  <a href="http://localhost:5173" target="_blank" class="footer-link">
+    Open Full KarmaKount Web Grid ↗
+  </a>
+
+  <script src="popup.js"></script>
+</body>
+</html>

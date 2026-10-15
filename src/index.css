@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  }
+  
+  h1, h2, h3, .font-cinzel {
+    font-family: 'Cinzel', serif;
+  }
+  
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+/* Custom Karma Glows & Animations */
+@keyframes pulse-celestial {
+  0%, 100% {
+    box-shadow: 0 0 25px -3px rgba(245, 158, 11, 0.4), 0 0 50px -10px rgba(251, 191, 36, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 45px 5px rgba(245, 158, 11, 0.7), 0 0 80px 5px rgba(251, 191, 36, 0.4);
+  }
+}
+
+@keyframes pulse-infernal {
+  0%, 100% {
+    box-shadow: 0 0 25px -3px rgba(239, 68, 68, 0.5), 0 0 50px -10px rgba(185, 28, 28, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 45px 5px rgba(239, 68, 68, 0.8), 0 0 85px 5px rgba(220, 38, 38, 0.5);
+  }
+}
+
+@keyframes radar-sweep {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.aura-celestial {
+  animation: pulse-celestial 4s infinite ease-in-out;
+}
+
+.aura-infernal {
+  animation: pulse-infernal 3s infinite ease-in-out;
+}
+
+.animate-radar-sweep {
+  animation: radar-sweep 4s linear infinite;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.8);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.4);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.6);
+}
