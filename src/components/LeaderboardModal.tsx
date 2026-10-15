@@ -22,56 +22,56 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
   return (
     <div className="space-y-6">
       {/* Banner */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-950/60 via-slate-900 to-indigo-950/60 border border-slate-800 p-6 sm:p-8 shadow-2xl backdrop-blur-xl">
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-950/40 via-slate-900 to-rose-950/40 border border-slate-800 p-6 sm:p-8 shadow-2xl backdrop-blur-xl">
         <div className="flex items-center gap-2 mb-2">
-          <span className="flex items-center gap-1.5 text-xs font-mono uppercase bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2.5 py-0.5 rounded-full font-bold">
+          <span className="flex items-center gap-1.5 text-xs font-mono uppercase bg-amber-500/20 text-amber-300 border border-amber-500/30 px-3 py-1 rounded-full font-bold">
             <Trophy className="w-3.5 h-3.5 text-amber-400" />
-            Global Hall of Records
+            Global Community Roster
           </span>
         </div>
-        <h2 className="text-2xl sm:text-3xl font-black font-cinzel text-white tracking-wide">
-          The Cosmic Leaderboard
+        <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+          Kindness Leaderboard
         </h2>
         <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-xl">
-          The greatest paragons of light, notorious agents of chaos, and the most respected arbiters of consensus across all IRL city grids.
+          Celebrating everyday heroes, thoughtful neighbors, and the community members who verify real good deeds worldwide.
         </p>
 
         {/* Tab switcher */}
-        <div className="flex items-center gap-2 mt-6">
+        <div className="flex flex-wrap items-center gap-2 mt-6">
           <button
             onClick={() => setTab('SAINTS')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
+            className={`px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 ${
               tab === 'SAINTS'
-                ? 'bg-amber-500 text-slate-950 shadow-lg shadow-amber-500/20'
+                ? 'bg-gradient-to-r from-amber-500 to-rose-500 text-white shadow-lg shadow-amber-500/20'
                 : 'bg-slate-950 text-slate-400 hover:text-white border border-slate-800'
             }`}
           >
             <Sparkles className="w-3.5 h-3.5" />
-            <span>The Saints (Highest Light)</span>
+            <span>Top Kind Souls</span>
           </button>
 
           <button
             onClick={() => setTab('SINNERS')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
+            className={`px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 ${
               tab === 'SINNERS'
                 ? 'bg-rose-600 text-white shadow-lg shadow-rose-600/20'
                 : 'bg-slate-950 text-slate-400 hover:text-white border border-slate-800'
             }`}
           >
             <Flame className="w-3.5 h-3.5" />
-            <span>The Tricksters (Infamy)</span>
+            <span>Rebuilding Karma</span>
           </button>
 
           <button
             onClick={() => setTab('ARBITERS')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
+            className={`px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 ${
               tab === 'ARBITERS'
                 ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
                 : 'bg-slate-950 text-slate-400 hover:text-white border border-slate-800'
             }`}
           >
             <Scale className="w-3.5 h-3.5" />
-            <span>Top Arbiters (Jury XP)</span>
+            <span>Top Jurors</span>
           </button>
         </div>
       </div>
@@ -85,7 +85,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
           return (
             <div
               key={player.id}
-              className={`flex items-center justify-between p-4 rounded-2xl border transition backdrop-blur-md ${
+              className={`flex items-center justify-between p-4 rounded-3xl border transition backdrop-blur-md ${
                 isCurrent 
                   ? 'bg-amber-500/10 border-amber-500/40 shadow-lg' 
                   : 'bg-slate-900/70 border-slate-800/80 hover:border-slate-700'
@@ -93,9 +93,9 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
             >
               <div className="flex items-center gap-4">
                 {/* Rank Badge */}
-                <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-cinzel font-black text-sm ${
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
                   rank === 1 
-                    ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/40' 
+                    ? 'bg-amber-400 text-slate-950 shadow-md shadow-amber-400/40' 
                     : rank === 2 
                     ? 'bg-slate-300 text-slate-950' 
                     : rank === 3 
@@ -106,7 +106,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
                 </div>
 
                 {/* Avatar */}
-                <div className="w-12 h-12 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-center text-2xl">
+                <div className="w-12 h-12 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-center text-2xl shadow-inner">
                   {player.avatar}
                 </div>
 
@@ -116,13 +116,13 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
                     <span className="font-bold text-slate-100 text-sm">{player.displayName}</span>
                     <span className="text-xs font-mono text-slate-400">{player.username}</span>
                     {isCurrent && (
-                      <span className="text-[10px] font-mono bg-amber-400 text-slate-950 font-bold px-1.5 py-0.2 rounded">
+                      <span className="text-[10px] font-mono bg-amber-400 text-slate-950 font-bold px-2 py-0.5 rounded-full">
                         YOU
                       </span>
                     )}
                   </div>
                   <div className="flex items-center gap-2 text-xs text-slate-400 mt-0.5">
-                    <span className="text-amber-400/90 font-cinzel text-[11px]">{player.title}</span>
+                    <span className="text-amber-300/90 font-medium text-[11px]">{player.title}</span>
                     <span>•</span>
                     <span className="font-mono text-[11px] text-slate-500">{player.location.name}</span>
                   </div>

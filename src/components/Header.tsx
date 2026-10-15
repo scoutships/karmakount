@@ -1,6 +1,6 @@
 import React from 'react';
 import { Player, KarmicStats } from '../types';
-import { Scale, Volume2, VolumeX, QrCode, Shield, Sparkles, Flame, Users, Radio, LogIn, LogOut, UserCheck, Droplets, Coins } from 'lucide-react';
+import { Scale, Volume2, VolumeX, QrCode, Shield, Sparkles, Flame, Users, Radio, LogIn, LogOut, UserCheck, Droplets, Coins, HelpCircle } from 'lucide-react';
 import { soundManager } from '../services/sound';
 
 interface HeaderProps {
@@ -8,11 +8,12 @@ interface HeaderProps {
   players: Player[];
   onSelectPlayer: (player: Player) => void;
   stats: KarmicStats | null;
-  activeTab: 'feed' | 'court' | 'radar' | 'quests' | 'leaderboard';
-  setActiveTab: (tab: 'feed' | 'court' | 'radar' | 'quests' | 'leaderboard') => void;
+  activeTab: 'feed' | 'court' | 'radar' | 'quests' | 'leaderboard' | 'faq';
+  setActiveTab: (tab: 'feed' | 'court' | 'radar' | 'quests' | 'leaderboard' | 'faq') => void;
   onOpenLogModal: () => void;
   onOpenSigilModal: () => void;
   onOpenAuthModal: () => void;
+  onOpenHowItWorks?: () => void;
   onOpenFaucetModal?: () => void;
   onOpenTokenomicsModal?: () => void;
   onSignOut: () => void;
@@ -32,6 +33,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenLogModal,
   onOpenSigilModal,
   onOpenAuthModal,
+  onOpenHowItWorks,
   onOpenFaucetModal,
   onOpenTokenomicsModal,
   onSignOut,
@@ -121,21 +123,21 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
         {/* Brand */}
         <div className="flex items-center gap-3 cursor-pointer" onClick={() => setActiveTab('feed')}>
-          <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 via-purple-600 to-rose-600 shadow-lg shadow-amber-500/20">
-            <Scale className="w-6 h-6 text-slate-950 font-bold" />
-            <div className="absolute -top-1 -right-1 w-3 h-3 bg-amber-400 rounded-full animate-ping opacity-75" />
+          <div className="relative flex items-center justify-center w-10 h-10 rounded-2xl bg-gradient-to-br from-rose-500 via-pink-500 to-amber-400 shadow-lg shadow-rose-500/20">
+            <Scale className="w-5 h-5 text-white font-bold" />
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-pink-400 rounded-full animate-ping opacity-75" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-cinzel text-xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-100 to-amber-500">
+              <span className="text-xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-rose-300 via-pink-200 to-amber-300">
                 KarmaKount
               </span>
-              <span className="text-[10px] font-mono uppercase bg-amber-500/10 text-amber-400 border border-amber-500/30 px-1.5 py-0.2 rounded font-bold">
-                IRL MMO
+              <span className="text-[10px] font-mono uppercase bg-rose-500/10 text-rose-300 border border-rose-500/30 px-2 py-0.5 rounded-full font-bold">
+                IRL Kindness
               </span>
             </div>
             <p className="text-[10px] text-slate-400 tracking-tight font-medium hidden sm:block">
-              Universal Real-World Ledger & Score
+              Do Good. Earn Real $KARMA on Base.
             </p>
           </div>
         </div>
@@ -144,60 +146,72 @@ export const Header: React.FC<HeaderProps> = ({
         <nav className="flex items-center gap-1 sm:gap-2">
           <button
             onClick={() => setActiveTab('feed')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition flex items-center gap-1.5 ${
               activeTab === 'feed'
+                ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40 shadow-sm shadow-rose-500/10'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+            }`}
+          >
+            <Sparkles className="w-3.5 h-3.5 text-rose-400" />
+            <span>Deeds</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('quests')}
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition flex items-center gap-1.5 ${
+              activeTab === 'quests'
                 ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm shadow-amber-500/10'
                 : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
             }`}
           >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Feed</span>
+            <Flame className="w-3.5 h-3.5 text-amber-400" />
+            <span>Quests</span>
           </button>
 
           <button
             onClick={() => setActiveTab('court')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition flex items-center gap-1.5 ${
               activeTab === 'court'
                 ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 shadow-sm shadow-indigo-500/10'
                 : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
             }`}
           >
-            <Shield className="w-3.5 h-3.5" />
-            <span>Court (Jury)</span>
+            <Shield className="w-3.5 h-3.5 text-indigo-400" />
+            <span>Peer Jury</span>
           </button>
 
           <button
-            onClick={() => setActiveTab('radar')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 ${
-              activeTab === 'radar'
+            onClick={() => setActiveTab('leaderboard')}
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition flex items-center gap-1.5 ${
+              activeTab === 'leaderboard'
                 ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-sm shadow-emerald-500/10'
                 : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
             }`}
           >
-            <Radio className="w-3.5 h-3.5 text-emerald-400" />
-            <span>IRL Radar</span>
+            <Users className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Leaderboard</span>
           </button>
 
           <button
-            onClick={() => setActiveTab('quests')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 ${
-              activeTab === 'quests'
+            onClick={() => setActiveTab('faq')}
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition flex items-center gap-1.5 ${
+              activeTab === 'faq'
                 ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40 shadow-sm shadow-purple-500/10'
                 : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
             }`}
           >
-            <Flame className="w-3.5 h-3.5 text-purple-400" />
-            <span>Bounties</span>
+            <HelpCircle className="w-3.5 h-3.5 text-purple-400" />
+            <span>FAQ</span>
           </button>
         </nav>
 
-        {/* Action Buttons: Log Deed, My Sigil & Sign In/Out */}
+        {/* Action Buttons: Post Deed, Faucet, $KARMA, Sign In */}
         <div className="flex items-center gap-2">
           {isAuthenticated ? (
             <button
               onClick={onSignOut}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-700 bg-slate-800/70 hover:bg-rose-950/40 hover:border-rose-500/50 text-slate-300 hover:text-rose-300 text-xs font-semibold transition"
-              title="Sign Out of Soul Session"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-slate-700 bg-slate-800/70 hover:bg-rose-950/40 hover:border-rose-500/50 text-slate-300 hover:text-rose-300 text-xs font-semibold transition"
+              title="Sign Out"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Sign Out</span>
@@ -205,34 +219,29 @@ export const Header: React.FC<HeaderProps> = ({
           ) : (
             <button
               onClick={onOpenAuthModal}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition shadow-md shadow-indigo-600/20 active:scale-95"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-rose-500 to-indigo-600 hover:from-rose-600 hover:to-indigo-500 text-white text-xs font-bold transition shadow-md shadow-rose-500/20 active:scale-95"
             >
               <LogIn className="w-3.5 h-3.5" />
-              <span>Login / Register</span>
+              <span>✨ Sign In / Join</span>
             </button>
           )}
 
           {onOpenFaucetModal && (
             <button
               onClick={onOpenFaucetModal}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-cyan-500/40 bg-cyan-950/40 hover:bg-cyan-900/60 text-cyan-300 text-xs font-semibold transition hover:border-cyan-400 shadow-sm shadow-cyan-500/10 active:scale-95"
-              title="Dispense Free $KARMA Crypto Tokens"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-cyan-500/40 bg-cyan-950/40 hover:bg-cyan-900/60 text-cyan-300 text-xs font-semibold transition hover:border-cyan-400 shadow-sm shadow-cyan-500/10 active:scale-95"
+              title="Claim Free $KARMA Tokens"
             >
               <Droplets className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
-              <span className="hidden sm:inline">Faucet</span>
-              {typeof currentPlayer.cryptoBalance === 'number' && currentPlayer.cryptoBalance > 0 && (
-                <span className="text-[10px] font-mono bg-cyan-900/70 border border-cyan-700/50 px-1.5 py-0.2 rounded text-cyan-200">
-                  {currentPlayer.cryptoBalance > 1000000 ? `${(currentPlayer.cryptoBalance / 1000000).toFixed(0)}M` : `${currentPlayer.cryptoBalance}`} $K
-                </span>
-              )}
+              <span className="hidden sm:inline">Free Faucet</span>
             </button>
           )}
 
           {onOpenTokenomicsModal && (
             <button
               onClick={onOpenTokenomicsModal}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-amber-500/40 bg-amber-950/40 hover:bg-amber-900/60 text-amber-300 text-xs font-semibold transition hover:border-amber-400 shadow-sm shadow-amber-500/10 active:scale-95"
-              title="$KARMA Tokenomics & Real Crypto Coin"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-amber-500/40 bg-amber-950/40 hover:bg-amber-900/60 text-amber-300 text-xs font-semibold transition hover:border-amber-400 shadow-sm shadow-amber-500/10 active:scale-95"
+              title="$KARMA Token & Market Value"
             >
               <Coins className="w-3.5 h-3.5 text-amber-400" />
               <span className="hidden sm:inline">$KARMA Coin</span>
@@ -241,20 +250,18 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={onOpenSigilModal}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800/70 hover:bg-slate-800 text-slate-200 text-xs font-semibold transition hover:border-amber-500/50"
-            title="Scan or View IRL Sigil QR"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-slate-700 bg-slate-800/70 hover:bg-slate-800 text-slate-200 text-xs font-semibold transition hover:border-rose-500/50"
+            title="Scan or View Kindness QR"
           >
-            <QrCode className="w-4 h-4 text-amber-400" />
-            <span className="hidden md:inline">IRL Sigil</span>
+            <QrCode className="w-3.5 h-3.5 text-rose-400" />
+            <span className="hidden md:inline">IRL QR</span>
           </button>
 
           <button
             onClick={onOpenLogModal}
-            className="relative group overflow-hidden px-4 py-2 rounded-lg bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs uppercase tracking-wider shadow-lg shadow-amber-500/25 transition active:scale-95 flex items-center gap-1.5"
+            className="px-4 py-2 rounded-full bg-gradient-to-r from-rose-500 via-pink-500 to-amber-500 hover:from-rose-600 hover:via-pink-600 hover:to-amber-600 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-rose-500/25 transition active:scale-95 flex items-center gap-1.5"
           >
-            <span className="relative z-10 flex items-center gap-1.5">
-              <span>+ Log Deed</span>
-            </span>
+            <span>+ Share Deed</span>
           </button>
         </div>
       </div>

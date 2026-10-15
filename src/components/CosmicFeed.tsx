@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { soundManager } from '../services/sound';
 import { moderateContent } from '../services/moderator';
+import { HeroBanner } from './HeroBanner';
 import confetti from 'canvas-confetti';
 
 interface CosmicFeedProps {
@@ -15,6 +16,11 @@ interface CosmicFeedProps {
   onReact: (deedId: string, reaction: 'blessing' | 'cap' | 'fire') => Promise<void>;
   onAddComment: (deedId: string, text: string) => Promise<void>;
   onOpenShare?: (data: { title: string; text: string; polarity?: 'VIRTUE' | 'VICE' | 'NEUTRAL'; badgeText?: string }) => void;
+  onOpenLogModal?: () => void;
+  onOpenHowItWorks?: () => void;
+  onOpenTokenomics?: () => void;
+  isAuthenticated?: boolean;
+  onRequireAuth?: (action?: string) => void;
 }
 
 export const CosmicFeed: React.FC<CosmicFeedProps> = ({
@@ -24,6 +30,11 @@ export const CosmicFeed: React.FC<CosmicFeedProps> = ({
   onReact,
   onAddComment,
   onOpenShare,
+  onOpenLogModal,
+  onOpenHowItWorks,
+  onOpenTokenomics,
+  isAuthenticated = false,
+  onRequireAuth,
 }) => {
   const [filter, setFilter] = useState<'ALL' | 'VIRTUE' | 'VICE' | 'PENDING' | 'NEAR'>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
@@ -59,6 +70,10 @@ export const CosmicFeed: React.FC<CosmicFeedProps> = ({
   };
 
   const handleCastVote = async (deedId: string, vote: 'VOUCH' | 'CAP') => {
+    if (!isAuthenticated && onRequireAuth) {
+      onRequireAuth('Cast Peer Jury Vote');
+      return;
+    }
     setVotingMap(prev => ({ ...prev, [deedId]: true }));
     try {
       await onVote(deedId, vote);
@@ -76,6 +91,10 @@ export const CosmicFeed: React.FC<CosmicFeedProps> = ({
   };
 
   const handleSendComment = async (deedId: string) => {
+    if (!isAuthenticated && onRequireAuth) {
+      onRequireAuth('Post a Witness Comment');
+      return;
+    }
     const text = commentInputs[deedId]?.trim();
     if (!text) return;
 
@@ -118,6 +137,16 @@ export const CosmicFeed: React.FC<CosmicFeedProps> = ({
 
   return (
     <div className="space-y-6">
+      {/* Welcome Hero Explainer Banner */}
+      {onOpenLogModal && onOpenHowItWorks && onOpenTokenomics && (
+        <HeroBanner
+          onOpenLogModal={onOpenLogModal}
+          onOpenHowItWorks={onOpenHowItWorks}
+          onOpenTokenomics={onOpenTokenomics}
+          isAuthenticated={isAuthenticated}
+        />
+      )}
+
       {/* Controls Bar: Search & Category Chips */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-slate-900/60 p-3 rounded-2xl border border-slate-800/80 backdrop-blur-md">
         {/* Search */}
@@ -211,16 +240,16 @@ export const CosmicFeed: React.FC<CosmicFeedProps> = ({
             return (
               <div
                 key={deed.id}
-                className={`group relative overflow-hidden rounded-2xl transition-all duration-300 bg-slate-900/80 border p-5 shadow-xl ${
+                className={`group relative overflow-hidden rounded-3xl transition-all duration-300 bg-slate-900/80 border p-5 sm:p-6 shadow-xl backdrop-blur-md ${
                   isVirtue
-                    ? 'border-amber-500/30 hover:border-amber-500/50'
-                    : 'border-rose-500/30 hover:border-rose-500/50'
+                    ? 'border-rose-500/20 hover:border-rose-500/40 hover:shadow-rose-500/5'
+                    : 'border-slate-800 hover:border-rose-500/30'
                 }`}
               >
                 {/* Subtle side glow stripe */}
                 <div 
                   className={`absolute top-0 left-0 bottom-0 w-1.5 ${
-                    isVirtue ? 'bg-amber-400' : 'bg-rose-500'
+                    isVirtue ? 'bg-gradient-to-b from-rose-400 to-amber-400' : 'bg-slate-600'
                   }`} 
                 />
 
@@ -291,8 +320,8 @@ export const CosmicFeed: React.FC<CosmicFeedProps> = ({
                         </span>
                       )}
                       {deed.status === 'CALL_CAP_DISPUTED' && (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold text-rose-400 bg-rose-950/60 border border-rose-600/50 px-2 py-0.5 rounded-full">
-                          <XCircle className="w-3 h-3" /> RULED CAP (FRAUD)
+                        <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold text-rose-300 bg-rose-950/60 border border-rose-600/40 px-2 py-0.5 rounded-full">
+                          <XCircle className="w-3 h-3" /> Disputed by Community
                         </span>
                       )}
                     </div>
@@ -300,16 +329,16 @@ export const CosmicFeed: React.FC<CosmicFeedProps> = ({
                 </div>
 
                 {/* Deed Content */}
-                <div className="mt-3.5 pl-3 border-l-2 border-slate-800">
+                <div className="mt-3.5 pl-3 border-l-2 border-rose-500/30">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-mono font-bold uppercase text-slate-400">
+                    <span className="text-xs font-mono font-bold uppercase text-rose-300/80">
                       [{deed.category}]
                     </span>
-                    <span className="text-[10px] font-mono uppercase bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">
+                    <span className="text-[10px] font-mono uppercase bg-slate-800/80 text-slate-300 px-2 py-0.5 rounded-full border border-slate-700/50">
                       Tier: {deed.impactTier}
                     </span>
                   </div>
-                  <h3 className="text-base font-bold text-slate-100 group-hover:text-amber-200 transition">
+                  <h3 className="text-base font-bold text-slate-100 group-hover:text-rose-200 transition">
                     {deed.title}
                   </h3>
                   <p className="text-xs text-slate-300 mt-1 leading-relaxed">
@@ -324,13 +353,13 @@ export const CosmicFeed: React.FC<CosmicFeedProps> = ({
                     {deed.status === 'PENDING_JURY' && (
                       <>
                         {isOwnDeed ? (
-                          <div className="text-[11px] font-mono text-amber-400/80 italic flex items-center gap-1">
+                          <div className="text-[11px] font-mono text-amber-300/90 italic flex items-center gap-1 bg-amber-950/30 px-2.5 py-1 rounded-full border border-amber-500/20">
                             <AlertCircle className="w-3.5 h-3.5" />
-                            <span>Your deed is awaiting peer corroboration</span>
+                            <span>Awaiting peer verification</span>
                           </div>
                         ) : userVote ? (
-                          <div className="text-[11px] font-mono text-slate-400 flex items-center gap-1 bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800">
-                            <span>Your Verdict:</span>
+                          <div className="text-[11px] font-mono text-slate-400 flex items-center gap-1 bg-slate-950 px-2.5 py-1 rounded-full border border-slate-800">
+                            <span>Your Vote:</span>
                             <strong className={userVote === 'VOUCH' ? 'text-emerald-400' : 'text-rose-400'}>
                               {userVote === 'VOUCH' ? 'Vouched (True)' : 'Called Cap'}
                             </strong>
@@ -340,12 +369,12 @@ export const CosmicFeed: React.FC<CosmicFeedProps> = ({
                             <button
                               onClick={() => handleCastVote(deed.id, 'VOUCH')}
                               disabled={votingMap[deed.id]}
-                              className="px-3 py-1.5 bg-emerald-950/70 hover:bg-emerald-900/90 text-emerald-300 border border-emerald-600/50 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm active:scale-95 disabled:opacity-50"
-                              title="Vouch for this deed (+15 Arbiter XP)"
+                              className="px-3 py-1.5 bg-emerald-950/70 hover:bg-emerald-900/90 text-emerald-300 border border-emerald-600/50 rounded-full text-xs font-bold transition flex items-center gap-1.5 shadow-sm active:scale-95 disabled:opacity-50"
+                              title="Vouch that this deed happened (+15 XP)"
                             >
                               <Check className="w-3.5 h-3.5 text-emerald-400" />
-                              <span>Vouch (True)</span>
-                              <span className="text-[10px] font-mono bg-emerald-900/60 px-1 rounded">
+                              <span>Vouch</span>
+                              <span className="text-[10px] font-mono bg-emerald-900/60 px-1.5 py-0.2 rounded-full">
                                 {deed.juryVotes.vouches}
                               </span>
                             </button>
@@ -353,12 +382,12 @@ export const CosmicFeed: React.FC<CosmicFeedProps> = ({
                             <button
                               onClick={() => handleCastVote(deed.id, 'CAP')}
                               disabled={votingMap[deed.id]}
-                              className="px-3 py-1.5 bg-rose-950/70 hover:bg-rose-900/90 text-rose-300 border border-rose-600/50 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm active:scale-95 disabled:opacity-50"
-                              title="Call Cap on false or exaggerated reporting"
+                              className="px-3 py-1.5 bg-rose-950/70 hover:bg-rose-900/90 text-rose-300 border border-rose-600/50 rounded-full text-xs font-bold transition flex items-center gap-1.5 shadow-sm active:scale-95 disabled:opacity-50"
+                              title="Doubt or report false claim"
                             >
                               <span>🧢</span>
-                              <span>Call Cap</span>
-                              <span className="text-[10px] font-mono bg-rose-900/60 px-1 rounded">
+                              <span>Doubt</span>
+                              <span className="text-[10px] font-mono bg-rose-900/60 px-1.5 py-0.2 rounded-full">
                                 {deed.juryVotes.caps}
                               </span>
                             </button>
@@ -368,7 +397,7 @@ export const CosmicFeed: React.FC<CosmicFeedProps> = ({
                     )}
 
                     {deed.status !== 'PENDING_JURY' && (
-                      <div className="flex items-center gap-2 text-xs font-mono text-slate-400">
+                      <div className="flex items-center gap-2 text-xs font-mono text-slate-400 bg-slate-950/60 px-2.5 py-1 rounded-full border border-slate-800/60">
                         <span className="text-emerald-400 font-bold">{deed.juryVotes.vouches} Vouches</span>
                         <span>•</span>
                         <span className="text-rose-400 font-bold">{deed.juryVotes.caps} Caps</span>
@@ -377,47 +406,48 @@ export const CosmicFeed: React.FC<CosmicFeedProps> = ({
                   </div>
 
                   {/* Right: Quick Reactions & Comment toggle */}
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5 flex-wrap sm:flex-nowrap">
                     <button
                       onClick={() => onReact(deed.id, 'blessing')}
-                      className="px-2.5 py-1 bg-slate-950 hover:bg-slate-800 rounded-lg border border-slate-800 text-xs text-slate-300 transition flex items-center gap-1"
-                      title="Bestow Blessing"
+                      className="px-2.5 py-1.5 bg-slate-950/80 hover:bg-rose-950/40 rounded-full border border-slate-800 hover:border-rose-500/40 text-xs text-slate-300 transition-all flex items-center gap-1 active:scale-95"
+                      title="Send Love & Kudos"
                     >
-                      <span>🕊️</span>
-                      <span className="font-mono text-[11px] font-bold text-amber-400">
+                      <span className="text-sm">💖</span>
+                      <span className="font-mono text-[11px] font-bold text-rose-300">
                         {deed.reactions.blessings}
                       </span>
                     </button>
 
                     <button
                       onClick={() => onReact(deed.id, 'cap')}
-                      className="px-2.5 py-1 bg-slate-950 hover:bg-slate-800 rounded-lg border border-slate-800 text-xs text-slate-300 transition flex items-center gap-1"
+                      className="px-2.5 py-1.5 bg-slate-950/80 hover:bg-indigo-950/40 rounded-full border border-slate-800 hover:border-indigo-500/40 text-xs text-slate-300 transition-all flex items-center gap-1 active:scale-95"
                       title="Cap Alert"
                     >
-                      <span>🧢</span>
-                      <span className="font-mono text-[11px] font-bold text-indigo-400">
+                      <span className="text-sm">🧢</span>
+                      <span className="font-mono text-[11px] font-bold text-indigo-300">
                         {deed.reactions.caps}
                       </span>
                     </button>
 
                     <button
                       onClick={() => onReact(deed.id, 'fire')}
-                      className="px-2.5 py-1 bg-slate-950 hover:bg-slate-800 rounded-lg border border-slate-800 text-xs text-slate-300 transition flex items-center gap-1"
-                      title="Spicy / Intense"
+                      className="px-2.5 py-1.5 bg-slate-950/80 hover:bg-amber-950/40 rounded-full border border-slate-800 hover:border-amber-500/40 text-xs text-slate-300 transition-all flex items-center gap-1 active:scale-95"
+                      title="Inspiring / Awesome"
                     >
-                      <span>🔥</span>
-                      <span className="font-mono text-[11px] font-bold text-rose-400">
+                      <span className="text-sm">✨</span>
+                      <span className="font-mono text-[11px] font-bold text-amber-300">
                         {deed.reactions.fires}
                       </span>
                     </button>
 
                     <button
                       onClick={() => toggleComments(deed.id)}
-                      className={`px-3 py-1 rounded-lg border text-xs font-semibold transition flex items-center gap-1.5 ${
+                      className={`px-3 py-1.5 rounded-full border text-xs font-semibold transition-all flex items-center gap-1.5 active:scale-95 ${
                         commentsOpen 
-                          ? 'bg-amber-500/20 text-amber-300 border-amber-500/40' 
-                          : 'bg-slate-950 hover:bg-slate-800 text-slate-400 border-slate-800'
+                          ? 'bg-rose-500/20 text-rose-200 border-rose-500/50 shadow-sm shadow-rose-500/20' 
+                          : 'bg-slate-950/80 hover:bg-slate-800 text-slate-400 border-slate-800 hover:text-slate-200'
                       }`}
+                      title="Kind Notes & Comments"
                     >
                       <MessageSquare className="w-3.5 h-3.5" />
                       <span>{deed.comments.length}</span>
@@ -428,16 +458,16 @@ export const CosmicFeed: React.FC<CosmicFeedProps> = ({
                         if (onOpenShare) {
                           onOpenShare({
                             title: deed.title,
-                            text: `⚖️ [KarmaKount IRL] ${deed.polarity === 'VIRTUE' ? '🕊️ Virtue' : '🔥 Vice'} Recorded: "${deed.title}" by ${deed.actorPlayerName} (${deed.karmaValue > 0 ? `+${deed.karmaValue}` : deed.karmaValue} Karma)!`,
+                            text: `💖 [KarmaKount IRL] ${deed.polarity === 'VIRTUE' ? '✨ Good Deed' : '⚠️ Vice'} Logged: "${deed.title}" by ${deed.actorPlayerName} (${deed.karmaValue > 0 ? `+${deed.karmaValue}` : deed.karmaValue} Karma)!`,
                             polarity: deed.polarity,
                             badgeText: `${deed.karmaValue > 0 ? `+${deed.karmaValue}` : deed.karmaValue} Karma`,
                           });
                         }
                       }}
-                      className="px-2.5 py-1 bg-slate-950 hover:bg-slate-800 rounded-lg border border-slate-800 text-xs text-slate-400 hover:text-amber-400 transition flex items-center gap-1"
-                      title="Share to X, Threads, Reddit, Instagram, etc."
+                      className="px-3 py-1.5 bg-slate-950/80 hover:bg-rose-950/30 rounded-full border border-slate-800 hover:border-rose-500/40 text-xs text-slate-400 hover:text-rose-300 transition-all flex items-center gap-1.5 active:scale-95"
+                      title="Share to socials"
                     >
-                      <Share2 className="w-3.5 h-3.5 text-amber-400" />
+                      <Share2 className="w-3.5 h-3.5 text-rose-400" />
                       <span className="hidden sm:inline font-bold text-[11px]">Share</span>
                     </button>
                   </div>
@@ -445,9 +475,9 @@ export const CosmicFeed: React.FC<CosmicFeedProps> = ({
 
                 {/* Collapsible Witness Testimonials & Comments */}
                 {commentsOpen && (
-                  <div className="mt-4 pt-3 border-t border-slate-800/80 space-y-3 bg-slate-950/40 p-3 rounded-xl">
+                  <div className="mt-4 pt-3 border-t border-slate-800/80 space-y-3 bg-slate-950/40 p-3 rounded-2xl">
                     <div className="text-[11px] font-mono uppercase text-slate-400 tracking-wider font-bold">
-                      Witness Testimony & Discussions ({deed.comments.length})
+                      Kind Notes & Comments ({deed.comments.length})
                     </div>
 
                     {deed.comments.length === 0 ? (

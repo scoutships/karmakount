@@ -169,20 +169,20 @@ export const LogDeedModal: React.FC<LogDeedModalProps> = ({
 
         {/* Modal Title */}
         <div className="mb-6">
-          <div className="flex flex-wrap items-center gap-2 mb-1">
-            <span className="text-[10px] uppercase font-mono tracking-widest text-amber-400 font-bold bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30">
-              The Cosmic Ledger
+          <div className="flex flex-wrap items-center gap-2 mb-1.5">
+            <span className="text-[10px] uppercase font-mono tracking-widest text-rose-300 font-bold bg-rose-500/10 px-2.5 py-0.5 rounded-full border border-rose-500/30">
+              IRL Kindness Log
             </span>
-            <span className="text-[10px] uppercase font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30 flex items-center gap-1">
+            <span className="text-[10px] uppercase font-mono text-emerald-300 font-bold bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/30 flex items-center gap-1">
               <ShieldCheck className="w-3 h-3 text-emerald-400" />
-              <span>Auto-Mod: PG-13 & Family Friendly</span>
+              <span>Safe & Friendly Community</span>
             </span>
           </div>
-          <h2 className="text-2xl font-bold font-cinzel text-white tracking-wide">
-            Record An IRL Deed
+          <h2 className="text-2xl font-bold text-white tracking-tight">
+            Share An IRL Deed
           </h2>
-          <p className="text-xs text-slate-400 mt-1">
-            Every action leaves an indelible mark on the cosmic scales. Be truthful; the jury will arbitrate.
+          <p className="text-xs sm:text-sm text-slate-300 mt-1 leading-relaxed">
+            Log a kind deed you did or witnessed in real life. Genuine deeds earn real <strong>$KARMA</strong> rewards!
           </p>
         </div>
 
@@ -416,19 +416,19 @@ export const LogDeedModal: React.FC<LogDeedModalProps> = ({
           <button
             type="submit"
             disabled={isSubmitting || (!autoMod.isValid && Boolean(title.trim() || description.trim()))}
-            className={`w-full py-3.5 rounded-2xl font-bold text-sm uppercase tracking-wider transition shadow-xl active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${
+            className={`w-full py-3.5 rounded-full font-bold text-sm tracking-wide transition shadow-xl active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${
               polarity === 'VIRTUE'
-                ? 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 shadow-amber-500/20'
+                ? 'bg-gradient-to-r from-rose-500 via-pink-500 to-amber-500 hover:from-rose-600 hover:via-pink-600 hover:to-amber-600 text-white shadow-rose-500/20'
                 : 'bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 text-white shadow-rose-600/20'
             }`}
           >
             <CheckCircle2 className="w-4 h-4" />
             <span>
               {isSubmitting
-                ? 'Inscribing in Cosmic Ledger...'
+                ? 'Publishing Deed...'
                 : !autoMod.isValid && (title.trim() || description.trim())
                 ? `Blocked by Auto-Mod (${autoMod.violation})`
-                : 'Inscribe Deed To Ledger'}
+                : 'Share Deed With Community ✨'}
             </span>
           </button>
         </form>

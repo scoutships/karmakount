@@ -8,16 +8,24 @@ interface KarmicCourtProps {
   deeds: Deed[];
   currentPlayer: Player;
   onVote: (deedId: string, vote: 'VOUCH' | 'CAP') => Promise<void>;
+  isAuthenticated?: boolean;
+  onRequireAuth?: (action?: string) => void;
 }
 
 export const KarmicCourt: React.FC<KarmicCourtProps> = ({
   deeds,
   currentPlayer,
   onVote,
+  isAuthenticated = false,
+  onRequireAuth,
 }) => {
   const pendingDeeds = deeds.filter(d => d.status === 'PENDING_JURY');
 
   const handleVote = async (deedId: string, vote: 'VOUCH' | 'CAP') => {
+    if (!isAuthenticated && onRequireAuth) {
+      onRequireAuth('Vote as Peer Juror');
+      return;
+    }
     await onVote(deedId, vote);
     soundManager.playGavelStrike();
     if (vote === 'VOUCH') {
@@ -32,48 +40,48 @@ export const KarmicCourt: React.FC<KarmicCourtProps> = ({
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <span className="flex items-center gap-1.5 text-xs font-mono uppercase bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2.5 py-0.5 rounded-full font-bold">
-                <Gavel className="w-3.5 h-3.5 text-indigo-400" />
-                The Tribunal of Consensus
+              <span className="flex items-center gap-1.5 text-xs font-mono uppercase bg-rose-500/20 text-rose-300 border border-rose-500/30 px-3 py-1 rounded-full font-bold">
+                <Gavel className="w-3.5 h-3.5 text-rose-400" />
+                Community Peer Review
               </span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-black font-cinzel text-white tracking-wide">
-              The Karmic Court
+            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+              The Peer Jury
             </h2>
             <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-xl leading-relaxed">
-              In an IRL world, truth is forged through peer witnesses. Review claims, corroborate genuine acts of grace, and strike down fraudulent reports.
+              Real kindness is verified together. Review community claims, vouch for genuine acts of kindness, and keep everyone honest.
             </p>
           </div>
 
-          <div className="bg-slate-950/80 border border-indigo-500/30 rounded-2xl p-4 flex items-center gap-4 shrink-0 shadow-lg">
-            <div className="w-12 h-12 rounded-xl bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center text-indigo-300">
+          <div className="bg-slate-950/80 border border-slate-800 rounded-2xl p-4 flex items-center gap-4 shrink-0 shadow-lg">
+            <div className="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-300">
               <Scale className="w-6 h-6" />
             </div>
             <div>
-              <div className="text-[10px] font-mono uppercase text-slate-400">Your Arbiter Accuracy</div>
-              <div className="text-xl font-bold font-mono text-indigo-300">
+              <div className="text-[10px] font-mono uppercase text-slate-400">Your Juror Accuracy</div>
+              <div className="text-xl font-bold font-mono text-rose-300">
                 {currentPlayer.juryAccuracy}%
               </div>
               <div className="text-[10px] text-slate-500 font-mono mt-0.5">
-                {currentPlayer.deedsWitnessed} cases deliberated
+                {currentPlayer.deedsWitnessed} deeds reviewed
               </div>
             </div>
           </div>
         </div>
 
         {/* Arbiter Code Rules */}
-        <div className="mt-6 pt-4 border-t border-indigo-900/50 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-slate-300">
-          <div className="flex items-start gap-2 bg-indigo-950/40 p-3 rounded-xl border border-indigo-900/40">
+        <div className="mt-6 pt-4 border-t border-slate-800/80 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-slate-300">
+          <div className="flex items-start gap-2 bg-slate-950/60 p-3 rounded-xl border border-slate-800">
             <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-            <span><strong>2 Vouches</strong> confirm the deed and release Karma points to the player.</span>
+            <span><strong>2 Vouches</strong> confirm the deed and award Karma points to the player.</span>
           </div>
-          <div className="flex items-start gap-2 bg-indigo-950/40 p-3 rounded-xl border border-indigo-900/40">
+          <div className="flex items-start gap-2 bg-slate-950/60 p-3 rounded-xl border border-slate-800">
             <XCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
-            <span><strong>2 Caps</strong> dismiss fraudulent reports and penalize the liar with <strong>-25 Karma</strong>.</span>
+            <span><strong>2 Caps</strong> dismiss false reports and gently penalize dishonest entries.</span>
           </div>
-          <div className="flex items-start gap-2 bg-indigo-950/40 p-3 rounded-xl border border-indigo-900/40">
+          <div className="flex items-start gap-2 bg-slate-950/60 p-3 rounded-xl border border-slate-800">
             <Award className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-            <span>Jurors earn <strong>+15 Arbiter XP</strong> for every fair consensus vote.</span>
+            <span>Jurors earn <strong>+15 XP</strong> for participating in fair consensus!</span>
           </div>
         </div>
       </div>
@@ -81,21 +89,21 @@ export const KarmicCourt: React.FC<KarmicCourtProps> = ({
       {/* Pending Docket */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-bold font-cinzel text-slate-100 flex items-center gap-2">
-            <Shield className="w-5 h-5 text-indigo-400" />
-            Active Cases Awaiting Deliberation ({pendingDeeds.length})
+          <h3 className="text-lg font-bold text-slate-100 flex items-center gap-2">
+            <Shield className="w-5 h-5 text-rose-400" />
+            Active Deeds Awaiting Peer Review ({pendingDeeds.length})
           </h3>
           <span className="text-xs text-slate-400 font-mono">
-            {pendingDeeds.length === 0 ? 'Docket Clear' : 'Jurors Needed'}
+            {pendingDeeds.length === 0 ? 'All Caught Up!' : 'Jurors Needed'}
           </span>
         </div>
 
         {pendingDeeds.length === 0 ? (
           <div className="bg-slate-900/40 border border-slate-800 rounded-3xl p-12 text-center text-slate-500">
-            <div className="w-12 h-12 mx-auto rounded-2xl bg-indigo-950/50 border border-indigo-800/40 flex items-center justify-center text-indigo-400 mb-3">
+            <div className="w-12 h-12 mx-auto rounded-2xl bg-slate-800/60 border border-slate-700/40 flex items-center justify-center text-rose-300 mb-3">
               <CheckCircle2 className="w-6 h-6" />
             </div>
-            <p className="font-semibold text-sm text-slate-200">The Scales Are In Equilibrium</p>
+            <p className="font-semibold text-sm text-slate-200">All Deeds Are Verified</p>
             <p className="text-xs text-slate-400 mt-1">
               All reported IRL deeds have achieved consensus. Check back when new deeds are logged!
             </p>

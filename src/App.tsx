@@ -14,6 +14,8 @@ import { LoginPage } from './components/LoginPage';
 import { ShareModal } from './components/ShareModal';
 import { CryptoFaucetModal } from './components/CryptoFaucetModal';
 import { TokenomicsModal } from './components/TokenomicsModal';
+import { HowItWorksModal } from './components/HowItWorksModal';
+import { FAQSection } from './components/FAQSection';
 import { soundManager } from './services/sound';
 import { NativePlatformBridge } from './services/native';
 import { Sparkles, Flame, Shield, X, Bell } from 'lucide-react';
@@ -25,12 +27,18 @@ export const App: React.FC = () => {
   const [quests, setQuests] = useState<Quest[]>([]);
   const [stats, setStats] = useState<KarmicStats | null>(null);
 
-  const [activeTab, setActiveTab] = useState<'feed' | 'court' | 'radar' | 'quests' | 'leaderboard'>('feed');
+  const [activeTab, setActiveTab] = useState<'feed' | 'court' | 'radar' | 'quests' | 'leaderboard' | 'faq'>('feed');
   const [isLogModalOpen, setIsLogModalOpen] = useState(false);
   const [isSigilModalOpen, setIsSigilModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isFaucetModalOpen, setIsFaucetModalOpen] = useState(false);
   const [isTokenomicsModalOpen, setIsTokenomicsModalOpen] = useState(false);
+  const [isHowItWorksOpen, setIsHowItWorksOpen] = useState(false);
+  const [authModalConfig, setAuthModalConfig] = useState<{
+    title?: string;
+    subtitle?: string;
+    initialTab?: 'LOGIN' | 'REGISTER';
+  } | null>(null);
   const [shareData, setShareData] = useState<{
     isOpen: boolean;
     title: string;
@@ -436,19 +444,27 @@ export const App: React.FC = () => {
     );
   }
 
-  // Dedicated Full-Page Login & Register Gateway
-  if (!isAuthenticated && !isGuestMode) {
-    return (
-      <LoginPage
-        onLoginSuccess={handleLoginSuccess}
-        onContinueAsGuest={() => {
-          setIsGuestMode(true);
-          localStorage.setItem('karma_guest_mode', 'true');
-          showToast('Browsing Cosmic Ledger as guest spectator', 'INFO');
-        }}
-      />
-    );
-  }
+  const handleOpenLogModal = () => {
+    if (!isAuthenticated) {
+      setAuthModalConfig({
+        title: 'Sign In to Post a Good Deed',
+        subtitle: 'Create a free account in 10 seconds to post your good deeds, climb the leaderboard, and earn real $KARMA tokens!',
+        initialTab: 'REGISTER',
+      });
+      setIsAuthModalOpen(true);
+      return;
+    }
+    setIsLogModalOpen(true);
+  };
+
+  const handleRequireAuth = (actionName = 'take this action') => {
+    setAuthModalConfig({
+      title: `Sign In to ${actionName}`,
+      subtitle: 'Create a free account in 10 seconds to participate, earn jury verification rewards, and claim $KARMA!',
+      initialTab: 'REGISTER',
+    });
+    setIsAuthModalOpen(true);
+  };
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
@@ -484,10 +500,20 @@ export const App: React.FC = () => {
         stats={stats}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        onOpenLogModal={() => setIsLogModalOpen(true)}
+        onOpenLogModal={handleOpenLogModal}
         onOpenSigilModal={() => setIsSigilModalOpen(true)}
-        onOpenAuthModal={() => setIsAuthModalOpen(true)}
-        onOpenFaucetModal={() => setIsFaucetModalOpen(true)}
+        onOpenAuthModal={() => {
+          setAuthModalConfig(null);
+          setIsAuthModalOpen(true);
+        }}
+        onOpenHowItWorks={() => setIsHowItWorksOpen(true)}
+        onOpenFaucetModal={() => {
+          if (!isAuthenticated) {
+            handleRequireAuth('Claim Free $KARMA Faucet');
+            return;
+          }
+          setIsFaucetModalOpen(true);
+        }}
         onOpenTokenomicsModal={() => setIsTokenomicsModalOpen(true)}
         onSignOut={handleSignOut}
         isAuthenticated={isAuthenticated}
@@ -501,8 +527,20 @@ export const App: React.FC = () => {
         {/* Player Profile HUD */}
         <PlayerHud
           player={currentPlayer}
+          isAuthenticated={isAuthenticated}
+          onOpenAuth={() => {
+            setAuthModalConfig(null);
+            setIsAuthModalOpen(true);
+          }}
+          onOpenHowItWorks={() => setIsHowItWorksOpen(true)}
           onOpenSigilModal={() => setIsSigilModalOpen(true)}
-          onOpenFaucet={() => setIsFaucetModalOpen(true)}
+          onOpenFaucet={() => {
+            if (!isAuthenticated) {
+              handleRequireAuth('Claim Free $KARMA Faucet');
+              return;
+            }
+            setIsFaucetModalOpen(true);
+          }}
           onOpenTokenomics={() => setIsTokenomicsModalOpen(true)}
           onSimulateEncounter={handleSimulateEncounter}
           onOpenAtonement={() => setActiveTab('quests')}
@@ -528,6 +566,11 @@ export const App: React.FC = () => {
             onReact={handleReact}
             onAddComment={handleAddComment}
             onOpenShare={(data) => setShareData({ isOpen: true, ...data })}
+            onOpenLogModal={handleOpenLogModal}
+            onOpenHowItWorks={() => setIsHowItWorksOpen(true)}
+            onOpenTokenomics={() => setIsTokenomicsModalOpen(true)}
+            isAuthenticated={isAuthenticated}
+            onRequireAuth={handleRequireAuth}
           />
         )}
 
@@ -536,6 +579,8 @@ export const App: React.FC = () => {
             deeds={deeds}
             currentPlayer={currentPlayer}
             onVote={handleVote}
+            isAuthenticated={isAuthenticated}
+            onRequireAuth={handleRequireAuth}
           />
         )}
 
@@ -561,6 +606,18 @@ export const App: React.FC = () => {
             currentPlayer={currentPlayer}
           />
         )}
+
+        {activeTab === 'faq' && (
+          <FAQSection
+            onOpenLogModal={handleOpenLogModal}
+            onOpenTokenomics={() => setIsTokenomicsModalOpen(true)}
+            onOpenAuthModal={() => {
+              setAuthModalConfig(null);
+              setIsAuthModalOpen(true);
+            }}
+            isAuthenticated={isAuthenticated}
+          />
+        )}
       </main>
 
       {/* Modals */}
@@ -579,14 +636,27 @@ export const App: React.FC = () => {
         players={players}
         onQuickBless={handleQuickBless}
         onLogForTarget={(targetPlayer) => {
-          setIsLogModalOpen(true);
+          handleOpenLogModal();
         }}
       />
 
       <AuthModal
         isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
+        onClose={() => {
+          setIsAuthModalOpen(false);
+          setAuthModalConfig(null);
+        }}
         onLoginSuccess={handleLoginSuccess}
+        title={authModalConfig?.title}
+        subtitle={authModalConfig?.subtitle}
+        initialTab={authModalConfig?.initialTab}
+      />
+
+      <HowItWorksModal
+        isOpen={isHowItWorksOpen}
+        onClose={() => setIsHowItWorksOpen(false)}
+        onOpenLogModal={handleOpenLogModal}
+        onOpenTokenomics={() => setIsTokenomicsModalOpen(true)}
       />
 
       {shareData && (

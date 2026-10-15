@@ -8,14 +8,20 @@ interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   onLoginSuccess: (player: Player, token: string) => void;
+  title?: string;
+  subtitle?: string;
+  initialTab?: 'LOGIN' | 'REGISTER';
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({
   isOpen,
   onClose,
   onLoginSuccess,
+  title,
+  subtitle,
+  initialTab = 'REGISTER',
 }) => {
-  const [tab, setTab] = useState<'LOGIN' | 'REGISTER'>('LOGIN');
+  const [tab, setTab] = useState<'LOGIN' | 'REGISTER'>(initialTab);
 
   // Login form state
   const [loginIdentifier, setLoginIdentifier] = useState('');
@@ -127,17 +133,17 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         {/* Header */}
         <div className="mb-6 text-center sm:text-left">
           <div className="flex items-center gap-2 mb-1 justify-center sm:justify-start">
-            <span className="text-[10px] uppercase font-mono tracking-widest text-amber-400 font-bold bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30">
-              Cosmic Ledger Access
+            <span className="text-[10px] uppercase font-mono tracking-widest text-rose-300 font-bold bg-rose-500/10 px-2.5 py-0.5 rounded-full border border-rose-500/30">
+              KarmaKount Account
             </span>
           </div>
-          <h2 className="text-2xl font-black font-cinzel text-white">
-            {tab === 'LOGIN' ? 'Enter KarmaKount' : 'Inscribe Your Soul Profile'}
+          <h2 className="text-2xl font-black text-white tracking-tight">
+            {title ? title : (tab === 'LOGIN' ? 'Welcome Back!' : 'Join KarmaKount in 10 Seconds')}
           </h2>
-          <p className="text-xs text-slate-400 mt-1">
-            {tab === 'LOGIN'
-              ? 'Sign in to log deeds, participate in jury tribunals, and check your standing.'
-              : 'Create an immortal account in the physical-world MMO ledger.'}
+          <p className="text-xs sm:text-sm text-slate-300 mt-1 leading-relaxed">
+            {subtitle ? subtitle : (tab === 'LOGIN'
+              ? 'Sign in to share deeds, cheer on others, and earn $KARMA rewards.'
+              : 'Free & open for everyone! Start logging deeds and earning $KARMA on Base.')}
           </p>
         </div>
 
@@ -148,11 +154,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             onClick={() => { setTab('LOGIN'); setError(null); }}
             className={`py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 ${
               tab === 'LOGIN'
-                ? 'bg-slate-800 text-amber-300 shadow-md border border-slate-700'
+                ? 'bg-slate-800 text-rose-300 shadow-md border border-slate-700'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            <ShieldCheck className="w-4 h-4 text-amber-400" />
+            <ShieldCheck className="w-4 h-4 text-rose-400" />
             <span>Sign In</span>
           </button>
           <button
@@ -160,12 +166,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             onClick={() => { setTab('REGISTER'); setError(null); }}
             className={`py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 ${
               tab === 'REGISTER'
-                ? 'bg-slate-800 text-indigo-300 shadow-md border border-slate-700'
+                ? 'bg-slate-800 text-amber-300 shadow-md border border-slate-700'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            <Sparkles className="w-4 h-4 text-indigo-400" />
-            <span>Register (New Soul)</span>
+            <Sparkles className="w-4 h-4 text-amber-400" />
+            <span>Join Free</span>
           </button>
         </div>
 
