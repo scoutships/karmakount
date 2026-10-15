@@ -5,7 +5,11 @@ import cors from 'cors';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 import { Deed, Player, Quest, Alignment, KarmicStats } from '../src/types';
+
+const JWT_SECRET = process.env.JWT_SECRET || 'karmakount_cosmic_jwt_secret_2026';
 
 const app = express();
 const server = createServer(app);
@@ -318,6 +322,166 @@ function broadcast(type: string, payload: unknown) {
   });
 }
 
+// Persistent storage and credentials
+let passwords: Record<string, string> = {
+  'p-1': bcrypt.hashSync('password123', 10),
+  'p-2': bcrypt.hashSync('password123', 10),
+  'p-3': bcrypt.hashSync('password123', 10),
+  'p-4': bcrypt.hashSync('password123', 10),
+};
+
+const DB_FILE = path.resolve('server/karma_db.json');
+
+function saveDb() {
+  try {
+    fs.writeFileSync(DB_FILE, JSON.stringify({ players, passwords, deeds, quests }, null, 2));
+  } catch (err) {
+    console.error('Error saving karma_db:', err);
+  }
+}
+
+function loadDb() {
+  try {
+    if (fs.existsSync(DB_FILE)) {
+      const data = JSON.parse(fs.readFileSync(DB_FILE, 'utf-8'));
+      if (data.players && data.players.length > 0) players = data.players;
+      if (data.passwords) passwords = { ...passwords, ...data.passwords };
+      if (data.deeds && data.deeds.length > 0) deeds = data.deeds;
+      if (data.quests && data.quests.length > 0) quests = data.quests;
+      console.log(`[KARMA DB] Loaded ${players.length} players and ${deeds.length} deeds from disk.`);
+    }
+  } catch (err) {
+    console.error('Error loading karma_db:', err);
+  }
+}
+loadDb();
+
+// ==================== AUTHENTICATION API ====================
+
+// Register a new player
+app.post('/api/auth/register', async (req, res) => {
+  try {
+    const { email, username, password, displayName, faction, avatar, locationName, bio } = req.body;
+
+    if (!email || !username || !password || !displayName) {
+      return res.status(400).json({ error: 'Email, username, password, and display name are required' });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({ error: 'Password must be at least 6 characters' });
+    }
+
+    const cleanUsername = username.trim().startsWith('@') ? username.trim() : `@${username.trim()}`;
+    const cleanEmail = email.trim().toLowerCase();
+
+    // Check unique username and email
+    const existing = players.find(
+      p => p.username.toLowerCase() === cleanUsername.toLowerCase() || p.email?.toLowerCase() === cleanEmail
+    );
+    if (existing) {
+      return res.status(409).json({ error: 'A player with this username or email already exists' });
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+    const newId = `p-${Date.now()}`;
+
+    const newPlayer: Player = {
+      id: newId,
+      email: cleanEmail,
+      username: cleanUsername,
+      displayName: displayName.trim(),
+      avatar: avatar || '⚡',
+      avatarColor: 'from-amber-500 to-indigo-600',
+      bio: bio?.trim() || 'A newly awakened soul navigating the Karmic Matrix.',
+      karmaScore: 50,
+      alignment: 'MORTAL_DRIFTER',
+      title: 'Wayfarer of the Threshold',
+      faction: faction || 'EQUILIBRIUM',
+      level: 1,
+      exp: 0,
+      vicesLogged: 0,
+      virtuesLogged: 0,
+      deedsWitnessed: 0,
+      juryAccuracy: 100,
+      badges: [
+        { id: `b-init-${Date.now()}`, name: 'Initiate of Fate', icon: '🌀', description: 'Joined the Cosmic Ledger', unlockedAt: new Date().toISOString() }
+      ],
+      location: { name: locationName?.trim() || 'Civic Square', lat: 37.7749, lng: -122.4194 },
+      qrPayload: `KARMA_IRL:${newId}:${cleanUsername}`,
+      isOnline: true
+    };
+
+    players.push(newPlayer);
+    passwords[newId] = passwordHash;
+    saveDb();
+
+    broadcast('PLAYER_JOINED', newPlayer);
+
+    const token = jwt.sign({ id: newPlayer.id, username: newPlayer.username }, JWT_SECRET, { expiresIn: '30d' });
+    res.status(201).json({ token, player: newPlayer });
+  } catch (err) {
+    console.error('Registration error:', err);
+    res.status(500).json({ error: 'Internal server error registering player' });
+  }
+});
+
+// Login
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { identifier, password } = req.body;
+    if (!identifier || !password) {
+      return res.status(400).json({ error: 'Username/Email and password required' });
+    }
+
+    const clean = identifier.trim().toLowerCase();
+    const player = players.find(p => 
+      p.email?.toLowerCase() === clean || 
+      p.username.toLowerCase() === clean ||
+      p.username.toLowerCase() === (clean.startsWith('@') ? clean : `@${clean}`)
+    );
+
+    if (!player) {
+      return res.status(401).json({ error: 'No player found with this username or email' });
+    }
+
+    const hash = passwords[player.id];
+    let isValid = false;
+    if (hash) {
+      isValid = await bcrypt.compare(password, hash);
+    } else if (password === 'password123') {
+      isValid = true;
+    }
+
+    if (!isValid) {
+      return res.status(401).json({ error: 'Invalid password. (Seed accounts use password123)' });
+    }
+
+    const token = jwt.sign({ id: player.id, username: player.username }, JWT_SECRET, { expiresIn: '30d' });
+    res.json({ token, player });
+  } catch (err) {
+    console.error('Login error:', err);
+    res.status(500).json({ error: 'Internal server error logging in' });
+  }
+});
+
+// Me (Check current session)
+app.get('/api/auth/me', (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'No token provided' });
+  }
+
+  const token = authHeader.substring(7);
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as { id: string };
+    const player = players.find(p => p.id === decoded.id);
+    if (!player) return res.status(404).json({ error: 'Player account not found' });
+    res.json({ player });
+  } catch {
+    res.status(401).json({ error: 'Session expired or invalid token' });
+  }
+});
+
 // REST Endpoints
 app.get('/api/players', (_req, res) => {
   res.json(players);
@@ -460,6 +624,7 @@ app.post('/api/deeds', (req, res) => {
   }
 
   deeds.unshift(newDeed);
+  saveDb();
   broadcast('DEED_CREATED', { deed: newDeed, actor });
 
   res.status(201).json(newDeed);
@@ -529,6 +694,7 @@ app.post('/api/deeds/:id/vote', (req, res) => {
     }
   }
 
+  saveDb();
   broadcast('JURY_VOTED', { deed, voter, actor });
   res.json({ deed, voter, actor });
 });
@@ -549,6 +715,7 @@ app.post('/api/deeds/:id/react', (req, res) => {
     deed.reactions.userReactions[playerId] = reactionType;
   }
 
+  saveDb();
   broadcast('REACTION_ADDED', deed);
   res.json(deed);
 });
@@ -578,6 +745,7 @@ app.post('/api/deeds/:id/comments', (req, res) => {
   };
 
   deed.comments.push(newComment);
+  saveDb();
   broadcast('COMMENT_ADDED', { deedId, comment: newComment });
   res.status(201).json(newComment);
 });
@@ -632,6 +800,7 @@ app.post('/api/quests/:id/complete', (req, res) => {
   };
 
   deeds.unshift(questDeed);
+  saveDb();
 
   broadcast('QUEST_COMPLETED', { quest, player, deed: questDeed });
   res.json({ quest, player, deed: questDeed });

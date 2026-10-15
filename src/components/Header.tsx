@@ -1,6 +1,6 @@
 import React from 'react';
 import { Player, KarmicStats } from '../types';
-import { Scale, Volume2, VolumeX, QrCode, Shield, Sparkles, Flame, Users, Radio } from 'lucide-react';
+import { Scale, Volume2, VolumeX, QrCode, Shield, Sparkles, Flame, Users, Radio, LogIn, LogOut, UserCheck } from 'lucide-react';
 import { soundManager } from '../services/sound';
 
 interface HeaderProps {
@@ -12,6 +12,9 @@ interface HeaderProps {
   setActiveTab: (tab: 'feed' | 'court' | 'radar' | 'quests' | 'leaderboard') => void;
   onOpenLogModal: () => void;
   onOpenSigilModal: () => void;
+  onOpenAuthModal: () => void;
+  onSignOut: () => void;
+  isAuthenticated: boolean;
   isWsConnected: boolean;
   soundMuted: boolean;
   setSoundMuted: (muted: boolean) => void;
@@ -26,6 +29,9 @@ export const Header: React.FC<HeaderProps> = ({
   setActiveTab,
   onOpenLogModal,
   onOpenSigilModal,
+  onOpenAuthModal,
+  onSignOut,
+  isAuthenticated,
   isWsConnected,
   soundMuted,
   setSoundMuted,
@@ -181,8 +187,27 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         </nav>
 
-        {/* Action Buttons: Log Deed & My Sigil */}
+        {/* Action Buttons: Log Deed, My Sigil & Sign In/Out */}
         <div className="flex items-center gap-2">
+          {isAuthenticated ? (
+            <button
+              onClick={onSignOut}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-700 bg-slate-800/70 hover:bg-rose-950/40 hover:border-rose-500/50 text-slate-300 hover:text-rose-300 text-xs font-semibold transition"
+              title="Sign Out of Soul Session"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Sign Out</span>
+            </button>
+          ) : (
+            <button
+              onClick={onOpenAuthModal}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition shadow-md shadow-indigo-600/20 active:scale-95"
+            >
+              <LogIn className="w-3.5 h-3.5" />
+              <span>Login / Register</span>
+            </button>
+          )}
+
           <button
             onClick={onOpenSigilModal}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800/70 hover:bg-slate-800 text-slate-200 text-xs font-semibold transition hover:border-amber-500/50"

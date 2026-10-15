@@ -43,9 +43,15 @@ export interface Player {
     lat: number;
     lng: number;
   };
+  email?: string;
   qrPayload: string;
   isOnline: boolean;
   avatarColor: string;
+}
+
+export interface AuthResponse {
+  token: string;
+  player: Player;
 }
 
 export interface DeedComment {

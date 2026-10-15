@@ -9,6 +9,7 @@ import { AtonementSanctuary } from './components/AtonementSanctuary';
 import { Leaderboard } from './components/LeaderboardModal';
 import { LogDeedModal } from './components/LogDeedModal';
 import { SigilScannerModal } from './components/SigilScannerModal';
+import { AuthModal } from './components/AuthModal';
 import { soundManager } from './services/sound';
 import { NativePlatformBridge } from './services/native';
 import { Sparkles, Flame, Shield, X, Bell } from 'lucide-react';
@@ -23,6 +24,10 @@ export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'feed' | 'court' | 'radar' | 'quests' | 'leaderboard'>('feed');
   const [isLogModalOpen, setIsLogModalOpen] = useState(false);
   const [isSigilModalOpen, setIsSigilModalOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authToken, setAuthToken] = useState<string | null>(() => localStorage.getItem('karma_auth_token'));
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => Boolean(localStorage.getItem('karma_auth_token')));
+
   const [isSimulating, setIsSimulating] = useState(false);
   const [isWsConnected, setIsWsConnected] = useState(false);
   const [soundMuted, setSoundMuted] = useState(soundManager.getMuted());
@@ -36,6 +41,32 @@ export const App: React.FC = () => {
       setToast((prev) => (prev?.text === text ? null : prev));
     }, 4500);
   };
+
+  // Check existing auth session on boot
+  useEffect(() => {
+    const checkAuth = async () => {
+      const token = localStorage.getItem('karma_auth_token');
+      if (token) {
+        try {
+          const res = await fetch('/api/auth/me', {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            setCurrentPlayer(data.player);
+            setIsAuthenticated(true);
+          } else {
+            localStorage.removeItem('karma_auth_token');
+            setAuthToken(null);
+            setIsAuthenticated(false);
+          }
+        } catch {
+          // Offline or network error
+        }
+      }
+    };
+    checkAuth();
+  }, []);
 
   // 1. Initial REST fetch
   useEffect(() => {
@@ -214,6 +245,22 @@ export const App: React.FC = () => {
     showToast(`Switched active persona to ${player.displayName}`, 'INFO');
   };
 
+  const handleLoginSuccess = (player: Player, token: string) => {
+    setCurrentPlayer(player);
+    setAuthToken(token);
+    setIsAuthenticated(true);
+    localStorage.setItem('karma_auth_token', token);
+    localStorage.setItem('karma_active_player_id', player.id);
+    showToast(`✨ Welcome to KarmaKount, ${player.displayName}!`, 'VIRTUE');
+  };
+
+  const handleSignOut = () => {
+    localStorage.removeItem('karma_auth_token');
+    setAuthToken(null);
+    setIsAuthenticated(false);
+    showToast('Signed out of soul session.', 'INFO');
+  };
+
   // Submit a new deed
   const handleSubmitDeed = async (deedData: {
     polarity: DeedPolarity;
@@ -387,6 +434,9 @@ export const App: React.FC = () => {
         setActiveTab={setActiveTab}
         onOpenLogModal={() => setIsLogModalOpen(true)}
         onOpenSigilModal={() => setIsSigilModalOpen(true)}
+        onOpenAuthModal={() => setIsAuthModalOpen(true)}
+        onSignOut={handleSignOut}
+        isAuthenticated={isAuthenticated}
         isWsConnected={isWsConnected}
         soundMuted={soundMuted}
         setSoundMuted={setSoundMuted}
@@ -464,6 +514,12 @@ export const App: React.FC = () => {
         onLogForTarget={(targetPlayer) => {
           setIsLogModalOpen(true);
         }}
+      />
+
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onLoginSuccess={handleLoginSuccess}
       />
     </div>
   );

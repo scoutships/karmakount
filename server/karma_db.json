@@ -1,0 +1,407 @@
+{
+  "players": [
+    {
+      "id": "p-1",
+      "username": "@SaintSophia",
+      "displayName": "Sophia Valerius",
+      "avatar": "🕊️",
+      "avatarColor": "from-amber-400 to-yellow-600",
+      "bio": "Dedicated to urban reforestation, blood donation, and returning misplaced grocery carts.",
+      "karmaScore": 1420,
+      "alignment": "CELESTIAL_ASCENDANT",
+      "title": "Archon of Pure Light",
+      "faction": "LUMEN",
+      "level": 14,
+      "exp": 420,
+      "virtuesLogged": 38,
+      "vicesLogged": 2,
+      "deedsWitnessed": 89,
+      "juryAccuracy": 98,
+      "badges": [
+        {
+          "id": "b1",
+          "name": "Halo of Truth",
+          "icon": "✨",
+          "description": "Maintained 95%+ jury accuracy over 50 cases",
+          "unlockedAt": "2026-09-12"
+        },
+        {
+          "id": "b2",
+          "name": "Good Samaritan",
+          "icon": "💖",
+          "description": "Logged 25 verified altruistic community acts",
+          "unlockedAt": "2026-09-28"
+        },
+        {
+          "id": "b3",
+          "name": "Solar Aegis",
+          "icon": "☀️",
+          "description": "Achieved +1,000 pure Karma",
+          "unlockedAt": "2026-10-04"
+        }
+      ],
+      "location": {
+        "name": "Metro Central District",
+        "lat": 37.7749,
+        "lng": -122.4194
+      },
+      "qrPayload": "KARMA_USER:p-1:@SaintSophia",
+      "isOnline": true
+    },
+    {
+      "id": "p-2",
+      "username": "@ShadowRebel",
+      "displayName": "Kaelen Drake",
+      "avatar": "🦇",
+      "avatarColor": "from-rose-600 to-purple-900",
+      "bio": "Rules were made to be bent. I test the boundaries so the saints stay humble.",
+      "karmaScore": -340,
+      "alignment": "ROGUE_TRICKSTER",
+      "title": "Harbinger of Mischief",
+      "faction": "CHAOS",
+      "level": 8,
+      "exp": 150,
+      "virtuesLogged": 5,
+      "vicesLogged": 22,
+      "deedsWitnessed": 41,
+      "juryAccuracy": 76,
+      "badges": [
+        {
+          "id": "b4",
+          "name": "Agent of Chaos",
+          "icon": "🃏",
+          "description": "Successfully survived 20 disputed reports",
+          "unlockedAt": "2026-10-01"
+        },
+        {
+          "id": "b5",
+          "name": "Nightcrawler",
+          "icon": "🌑",
+          "description": "Logged 10 mischief deeds after midnight",
+          "unlockedAt": "2026-10-09"
+        }
+      ],
+      "location": {
+        "name": "Industrial Arts District",
+        "lat": 37.778,
+        "lng": -122.408
+      },
+      "qrPayload": "KARMA_USER:p-2:@ShadowRebel",
+      "isOnline": true
+    },
+    {
+      "id": "p-3",
+      "username": "@ZenTao",
+      "displayName": "Master Chen",
+      "avatar": "☯️",
+      "avatarColor": "from-teal-400 to-cyan-700",
+      "bio": "Action without attachment. The ledger balances all things in time.",
+      "karmaScore": 35,
+      "alignment": "MORTAL_DRIFTER",
+      "title": "Wayfarer of the Threshold",
+      "faction": "EQUILIBRIUM",
+      "level": 11,
+      "exp": 280,
+      "virtuesLogged": 16,
+      "vicesLogged": 15,
+      "deedsWitnessed": 112,
+      "juryAccuracy": 95,
+      "badges": [
+        {
+          "id": "b6",
+          "name": "True Neutral",
+          "icon": "⚖️",
+          "description": "Kept Karma within ±50 points across 30 days",
+          "unlockedAt": "2026-08-30"
+        },
+        {
+          "id": "b7",
+          "name": "Supreme Arbiter",
+          "icon": "👁️",
+          "description": "Voted on over 100 Karmic Court juries",
+          "unlockedAt": "2026-10-11"
+        }
+      ],
+      "location": {
+        "name": "Bayside Promenade",
+        "lat": 37.781,
+        "lng": -122.392
+      },
+      "qrPayload": "KARMA_USER:p-3:@ZenTao",
+      "isOnline": false
+    },
+    {
+      "id": "p-4",
+      "username": "@ApexNovice",
+      "displayName": "Jordan Walker",
+      "avatar": "⚡",
+      "avatarColor": "from-amber-500 to-emerald-600",
+      "bio": "Just downloaded Karma IRL! Trying to atone for stealing my roommate’s artisanal cheese.",
+      "karmaScore": 110,
+      "alignment": "MORTAL_DRIFTER",
+      "title": "Wayfarer of the Threshold",
+      "faction": "LUMEN",
+      "level": 3,
+      "exp": 45,
+      "virtuesLogged": 6,
+      "vicesLogged": 4,
+      "deedsWitnessed": 12,
+      "juryAccuracy": 88,
+      "badges": [
+        {
+          "id": "b8",
+          "name": "First Steps",
+          "icon": "🌱",
+          "description": "Completed first self-confession and atonement",
+          "unlockedAt": "2026-10-13"
+        }
+      ],
+      "location": {
+        "name": "Civic Center Plaza",
+        "lat": 37.7795,
+        "lng": -122.417
+      },
+      "qrPayload": "KARMA_USER:p-4:@ApexNovice",
+      "isOnline": true
+    },
+    {
+      "id": "p-1792038460738",
+      "email": "neo@karmakount.com",
+      "username": "@NeoSaint",
+      "displayName": "Neo Anderson",
+      "avatar": "?",
+      "avatarColor": "from-amber-500 to-indigo-600",
+      "bio": "A newly awakened soul navigating the Karmic Matrix.",
+      "karmaScore": 50,
+      "alignment": "MORTAL_DRIFTER",
+      "title": "Wayfarer of the Threshold",
+      "faction": "LUMEN",
+      "level": 1,
+      "exp": 0,
+      "vicesLogged": 0,
+      "virtuesLogged": 0,
+      "deedsWitnessed": 0,
+      "juryAccuracy": 100,
+      "badges": [
+        {
+          "id": "b-init-1792038460738",
+          "name": "Initiate of Fate",
+          "icon": "🌀",
+          "description": "Joined the Cosmic Ledger",
+          "unlockedAt": "2026-10-15T04:27:40.738Z"
+        }
+      ],
+      "location": {
+        "name": "The Zion Grid",
+        "lat": 37.7749,
+        "lng": -122.4194
+      },
+      "qrPayload": "KARMA_IRL:p-1792038460738:@NeoSaint",
+      "isOnline": true
+    }
+  ],
+  "passwords": {
+    "p-1": "$2b$10$2oVtLmP0MYuDtcMr27aGOuB.eYnXPBNlz5342YD1P4pbGLt2bWspm",
+    "p-2": "$2b$10$ripyvPzCml7GfkwU.p7v7.Is908m0UnLnDpHg8maPHSo/ho/DxZ72",
+    "p-3": "$2b$10$LUSQ/RLaWUS.pMC8gbkqo.kjD7r1d0.7AuLQ6zr9iXfbaTRCNKope",
+    "p-4": "$2b$10$ZZEXROJcrzO451VNLuvh1OSJLqcku/8nqp8mZSKXxuzyfzeYW7jPa",
+    "p-1792038460738": "$2b$10$pqOsU/Y3ahXI9ofMmZt/We5Qe1EOZ3jgAJxAc301iTpO./DvQxBBq"
+  },
+  "deeds": [
+    {
+      "id": "d-101",
+      "createdAt": "2026-10-15T04:09:29.513Z",
+      "polarity": "VIRTUE",
+      "category": "Community Uplift",
+      "title": "Fixed elderly neighbor’s busted porch wheelchair ramp",
+      "description": "Spent 3 hours replacing rusted bolts and leveling out the ramp angle so Mrs. Higgins can safely roll her wheelchair out.",
+      "impactTier": "MAJOR",
+      "karmaValue": 120,
+      "actorPlayerId": "p-1",
+      "actorPlayerName": "Sophia Valerius (@SaintSophia)",
+      "actorAvatar": "🕊️",
+      "reporterPlayerId": "p-4",
+      "reporterPlayerName": "Jordan Walker (@ApexNovice)",
+      "isSelfReport": false,
+      "proofImage": null,
+      "location": {
+        "name": "Sunset Residential Sector",
+        "lat": 37.76,
+        "lng": -122.485,
+        "distanceMeters": 420
+      },
+      "status": "VERIFIED",
+      "juryVotes": {
+        "vouches": 5,
+        "caps": 0,
+        "voters": {
+          "p-3": "VOUCH",
+          "p-4": "VOUCH"
+        }
+      },
+      "reactions": {
+        "blessings": 14,
+        "caps": 0,
+        "fires": 9,
+        "userReactions": {}
+      },
+      "comments": [
+        {
+          "id": "c-1",
+          "playerId": "p-4",
+          "playerName": "Jordan Walker",
+          "playerAvatar": "⚡",
+          "text": "I saw her carrying the 2x4s and power tools down the avenue. Absolute saint.",
+          "timestamp": "2026-10-15T04:13:29.513Z"
+        }
+      ]
+    },
+    {
+      "id": "d-102",
+      "createdAt": "2026-10-15T03:42:29.513Z",
+      "polarity": "VICE",
+      "category": "Petty Spite & Obstruction",
+      "title": "Deliberately double-parked blocking 3 shared city bikes",
+      "description": "Parked an electric scooter sideways across the public bike dock on 4th street so nobody could undock their bikes during rush hour.",
+      "impactTier": "NOTABLE",
+      "karmaValue": -45,
+      "actorPlayerId": "p-2",
+      "actorPlayerName": "Kaelen Drake (@ShadowRebel)",
+      "actorAvatar": "🦇",
+      "reporterPlayerId": "p-1",
+      "reporterPlayerName": "Sophia Valerius (@SaintSophia)",
+      "isSelfReport": false,
+      "location": {
+        "name": "Downtown Commuter Hub",
+        "lat": 37.785,
+        "lng": -122.401,
+        "distanceMeters": 850
+      },
+      "status": "VERIFIED",
+      "juryVotes": {
+        "vouches": 4,
+        "caps": 1,
+        "voters": {
+          "p-1": "VOUCH",
+          "p-3": "VOUCH",
+          "p-2": "CAP"
+        }
+      },
+      "reactions": {
+        "blessings": 0,
+        "caps": 12,
+        "fires": 7,
+        "userReactions": {}
+      },
+      "comments": [
+        {
+          "id": "c-2",
+          "playerId": "p-2",
+          "playerName": "Kaelen Drake",
+          "playerAvatar": "🦇",
+          "text": "The kickstand was broken! I was merely leaning it gracefully.",
+          "timestamp": "2026-10-15T03:52:29.513Z"
+        },
+        {
+          "id": "c-3",
+          "playerId": "p-3",
+          "playerName": "Master Chen",
+          "playerAvatar": "☯️",
+          "text": "Graceful obstruction remains obstruction. The scales do not lie.",
+          "timestamp": "2026-10-15T04:07:29.513Z"
+        }
+      ]
+    },
+    {
+      "id": "d-103",
+      "createdAt": "2026-10-15T04:19:29.513Z",
+      "polarity": "VIRTUE",
+      "category": "Altruism & Charity",
+      "title": "Paid for stranger’s groceries when their card was declined",
+      "description": "At Safeway market, a father with 2 toddlers was $42 short for milk and groceries. Covered the whole tab anonymously.",
+      "impactTier": "NOTABLE",
+      "karmaValue": 50,
+      "actorPlayerId": "p-4",
+      "actorPlayerName": "Jordan Walker (@ApexNovice)",
+      "actorAvatar": "⚡",
+      "reporterPlayerId": "p-4",
+      "reporterPlayerName": "Jordan Walker (@ApexNovice)",
+      "isSelfReport": true,
+      "location": {
+        "name": "Marina Fresh Market",
+        "lat": 37.8,
+        "lng": -122.436,
+        "distanceMeters": 1200
+      },
+      "status": "PENDING_JURY",
+      "juryVotes": {
+        "vouches": 2,
+        "caps": 0,
+        "voters": {
+          "p-1": "VOUCH"
+        }
+      },
+      "reactions": {
+        "blessings": 6,
+        "caps": 0,
+        "fires": 3,
+        "userReactions": {}
+      },
+      "comments": []
+    }
+  ],
+  "quests": [
+    {
+      "id": "q-1",
+      "title": "The Cart Return Protocol",
+      "description": "Locate 3 stray shopping carts abandoned in a parking lot and return them to the proper collection bay.",
+      "category": "DAILY_DISCIPLINE",
+      "karmaReward": 35,
+      "difficulty": "EASY",
+      "expiresAt": "2026-10-15T16:27:29.513Z",
+      "completedBy": [
+        "p-1"
+      ],
+      "icon": "🛒",
+      "locationHint": "Any local supermarket parking lot"
+    },
+    {
+      "id": "q-2",
+      "title": "Micro-Sanitation Sprint",
+      "description": "Pick up at least 10 pieces of discarded plastic/trash along your walking commute and place them in recycling bins.",
+      "category": "COMMUNITY_BOUNTY",
+      "karmaReward": 60,
+      "difficulty": "MEDIUM",
+      "expiresAt": "2026-10-16T04:27:29.513Z",
+      "completedBy": [],
+      "icon": "🧤",
+      "locationHint": "Parks, bus stops, or riverfronts"
+    },
+    {
+      "id": "q-3",
+      "title": "Atonement: The Radical Apology",
+      "description": "Reach out to someone you ghosted, spoke harshly to, or wronged in the past 6 months. Deliver a sincere, no-excuses apology.",
+      "category": "ATONEMENT_RITUAL",
+      "karmaReward": 100,
+      "difficulty": "HEROIC",
+      "expiresAt": "2026-10-17T04:27:29.513Z",
+      "completedBy": [
+        "p-4"
+      ],
+      "icon": "🕯️",
+      "locationHint": "In-person conversation or phone call"
+    },
+    {
+      "id": "q-4",
+      "title": "Pay It Forward Coffee Chain",
+      "description": "Surprise the person behind you in line at a café or drive-thru by pre-paying for their beverage.",
+      "category": "COMMUNITY_BOUNTY",
+      "karmaReward": 45,
+      "difficulty": "EASY",
+      "expiresAt": "2026-10-15T22:27:29.513Z",
+      "completedBy": [],
+      "icon": "☕",
+      "locationHint": "Local coffee roastery or tea shop"
+    }
+  ]
+}
