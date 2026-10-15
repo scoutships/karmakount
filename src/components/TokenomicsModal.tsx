@@ -40,9 +40,14 @@ export const TokenomicsModal: React.FC<TokenomicsModalProps> = ({
 
   if (!isOpen) return null;
 
+  const CONTRACT_ADDRESS = '0x86B544dE599644F616B722738b5702692C12dC6D';
+  const BASESCAN_URL = 'https://basescan.org/address/0x86B544dE599644F616B722738b5702692C12dC6D';
+  const UNISWAP_URL = 'https://app.uniswap.org/positions/add/v3?chain=base&currency0=ETH&currency1=0x86B544dE599644F616B722738b5702692C12dC6D';
+  const DEXSCREENER_URL = 'https://dexscreener.com/base/0x86B544dE599644F616B722738b5702692C12dC6D';
+
   const handleCopyContract = () => {
     soundManager.playVirtueChime();
-    navigator.clipboard.writeText('0xKARMA77777777777777777777777777777777777');
+    navigator.clipboard.writeText(CONTRACT_ADDRESS);
     setCopiedContract(true);
     setTimeout(() => setCopiedContract(false), 2000);
   };
@@ -330,18 +335,62 @@ export const TokenomicsModal: React.FC<TokenomicsModalProps> = ({
               </div>
             </div>
 
-            <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
-              <div>
-                <span className="font-semibold text-slate-300">Solidity Smart Contract</span>
-                <p className="text-[11px] text-slate-500">contracts/KarmaKountToken.sol (ERC-20 + Burn + Permit)</p>
+            {/* Verified Contract Card */}
+            <div className="p-5 rounded-2xl bg-emerald-950/20 border border-emerald-500/30 space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-xs uppercase font-mono font-bold tracking-wider text-emerald-400">
+                    Verified Live on Base Mainnet
+                  </span>
+                </div>
+                <span className="text-[10px] px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 font-mono">
+                  Chain ID 8453
+                </span>
               </div>
-              <button
-                onClick={handleCopyContract}
-                className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center gap-1.5 transition-colors"
-              >
-                {copiedContract ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                <span>{copiedContract ? 'Copied Contract' : 'Copy Code'}</span>
-              </button>
+
+              <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center justify-between gap-2">
+                <div className="font-mono text-xs text-amber-300 truncate select-all">
+                  {CONTRACT_ADDRESS}
+                </div>
+                <button
+                  onClick={handleCopyContract}
+                  className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs flex items-center gap-1.5 shrink-0 transition-colors"
+                >
+                  {copiedContract ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  <span>{copiedContract ? 'Copied' : 'Copy'}</span>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+                <a
+                  href={BASESCAN_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3.5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-xs font-semibold text-slate-200 flex items-center justify-center gap-2 transition-colors"
+                >
+                  <ExternalLink className="w-3.5 h-3.5 text-blue-400" />
+                  <span>View on Basescan</span>
+                </a>
+                <a
+                  href={UNISWAP_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 text-xs font-semibold text-white flex items-center justify-center gap-2 shadow-lg shadow-pink-500/20 transition-all"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Seed Uniswap Pool</span>
+                </a>
+                <a
+                  href={DEXSCREENER_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3.5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-xs font-semibold text-slate-200 flex items-center justify-center gap-2 transition-colors"
+                >
+                  <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>DexScreener Chart</span>
+                </a>
+              </div>
             </div>
           </div>
         )}
@@ -371,7 +420,7 @@ export const TokenomicsModal: React.FC<TokenomicsModalProps> = ({
                     type="text"
                     value={walletInput}
                     onChange={(e) => setWalletInput(e.target.value)}
-                    placeholder="0x3F5CE5FBFe3E9af3971dD833D26bA9b5C936f0bE"
+                    placeholder="0x86B544dE599644F616B722738b5702692C12dC6D"
                     className="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-sm font-mono text-amber-300 placeholder-slate-600 focus:outline-none focus:border-amber-500"
                   />
                 </div>

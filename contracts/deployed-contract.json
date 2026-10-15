@@ -1,0 +1,12 @@
+{
+  "network": "Base Mainnet",
+  "chainId": 8453,
+  "token": "KarmaKountToken ($KARMA)",
+  "contractAddress": "0x86B544dE599644F616B722738b5702692C12dC6D",
+  "txHash": "0xa060aad8a8f934fbdca18a820e46352f362999223ab1620f5f498ffbe907fe40",
+  "owner": "0x911763C6557A3696C39890C9472d9F9364cA6646",
+  "founderBalance": "600,000,000 $KARMA",
+  "liquidityBalance": "200,000,000 $KARMA",
+  "gameVaultBalance": "200,000,000 $KARMA",
+  "deployedAt": "2026-10-15T10:33:09.998Z"
+}
