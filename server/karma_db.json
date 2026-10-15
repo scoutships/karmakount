@@ -209,6 +209,117 @@
   },
   "deeds": [
     {
+      "id": "d-1792040054320",
+      "createdAt": "2026-10-15T04:54:14.320Z",
+      "polarity": "VIRTUE",
+      "category": "Altruism & Charity",
+      "title": "Good vibes",
+      "description": "i had a great day helping at the community garden",
+      "impactTier": "NOTABLE",
+      "karmaValue": 35,
+      "actorPlayerId": "p-1",
+      "actorPlayerName": "Sophia Valerius (@SaintSophia)",
+      "actorAvatar": "🕊️",
+      "targetPlayerId": null,
+      "targetPlayerName": null,
+      "reporterPlayerId": "p-2",
+      "reporterPlayerName": "Kaelen Drake (@ShadowRebel)",
+      "isSelfReport": false,
+      "proofImage": null,
+      "location": {
+        "name": "Central Park",
+        "lat": 37,
+        "lng": -122
+      },
+      "status": "PENDING_JURY",
+      "juryVotes": {
+        "vouches": 0,
+        "caps": 0,
+        "voters": {}
+      },
+      "reactions": {
+        "blessings": 1,
+        "caps": 0,
+        "fires": 0,
+        "userReactions": {}
+      },
+      "comments": []
+    },
+    {
+      "id": "d-1792040054311",
+      "createdAt": "2026-10-15T04:54:14.311Z",
+      "polarity": "VIRTUE",
+      "category": "Altruism & Charity",
+      "title": "Day out in nature",
+      "description": "i went skiing and went 150km/hr down the mountain",
+      "impactTier": "NOTABLE",
+      "karmaValue": 35,
+      "actorPlayerId": "p-1",
+      "actorPlayerName": "Sophia Valerius (@SaintSophia)",
+      "actorAvatar": "🕊️",
+      "targetPlayerId": null,
+      "targetPlayerName": null,
+      "reporterPlayerId": "p-2",
+      "reporterPlayerName": "Kaelen Drake (@ShadowRebel)",
+      "isSelfReport": false,
+      "proofImage": null,
+      "location": {
+        "name": "Central Park",
+        "lat": 37,
+        "lng": -122
+      },
+      "status": "PENDING_JURY",
+      "juryVotes": {
+        "vouches": 0,
+        "caps": 0,
+        "voters": {}
+      },
+      "reactions": {
+        "blessings": 1,
+        "caps": 0,
+        "fires": 0,
+        "userReactions": {}
+      },
+      "comments": []
+    },
+    {
+      "id": "d-1792040054301",
+      "createdAt": "2026-10-15T04:54:14.301Z",
+      "polarity": "VIRTUE",
+      "category": "Altruism & Charity",
+      "title": "Helped someone in need",
+      "description": "i gave a homeless man $5 and hot tea",
+      "impactTier": "NOTABLE",
+      "karmaValue": 35,
+      "actorPlayerId": "p-1",
+      "actorPlayerName": "Sophia Valerius (@SaintSophia)",
+      "actorAvatar": "🕊️",
+      "targetPlayerId": null,
+      "targetPlayerName": null,
+      "reporterPlayerId": "p-2",
+      "reporterPlayerName": "Kaelen Drake (@ShadowRebel)",
+      "isSelfReport": false,
+      "proofImage": null,
+      "location": {
+        "name": "Central Park",
+        "lat": 37,
+        "lng": -122
+      },
+      "status": "PENDING_JURY",
+      "juryVotes": {
+        "vouches": 0,
+        "caps": 0,
+        "voters": {}
+      },
+      "reactions": {
+        "blessings": 1,
+        "caps": 0,
+        "fires": 0,
+        "userReactions": {}
+      },
+      "comments": []
+    },
+    {
       "id": "d-101",
       "createdAt": "2026-10-15T04:09:29.513Z",
       "polarity": "VIRTUE",

@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { Deed, Player, DeedPolarity, DeedStatus } from '../types';
 import { 
   Sparkles, Flame, Shield, Check, XCircle, MessageSquare, 
-  MapPin, Clock, Filter, Search, ThumbsUp, Send, UserCheck, AlertCircle, Share2 
+  MapPin, Clock, Filter, Search, ThumbsUp, Send, UserCheck, AlertCircle, Share2, ShieldAlert 
 } from 'lucide-react';
 import { soundManager } from '../services/sound';
+import { moderateContent } from '../services/moderator';
 import confetti from 'canvas-confetti';
 
 interface CosmicFeedProps {
@@ -28,6 +29,7 @@ export const CosmicFeed: React.FC<CosmicFeedProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [openComments, setOpenComments] = useState<Record<string, boolean>>({});
   const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
+  const [commentErrors, setCommentErrors] = useState<Record<string, string>>({});
   const [votingMap, setVotingMap] = useState<Record<string, boolean>>({});
 
   const filteredDeeds = deeds.filter((deed) => {
@@ -76,6 +78,31 @@ export const CosmicFeed: React.FC<CosmicFeedProps> = ({
   const handleSendComment = async (deedId: string) => {
     const text = commentInputs[deedId]?.trim();
     if (!text) return;
+
+    // Client-side Auto-Mod check
+    const modResult = moderateContent(text);
+    if (!modResult.isValid) {
+      soundManager.playViceRumble();
+      setCommentErrors(prev => ({ 
+        ...prev, 
+        [deedId]: modResult.reason || 'Blocked by Auto-Mod. Please adhere to PG-13 community rules.' 
+      }));
+      setTimeout(() => {
+        setCommentErrors(prev => {
+          const next = { ...prev };
+          delete next[deedId];
+          return next;
+        });
+      }, 5500);
+      return;
+    }
+
+    setCommentErrors(prev => {
+      const next = { ...prev };
+      delete next[deedId];
+      return next;
+    });
+
     await onAddComment(deedId, text);
     setCommentInputs(prev => ({ ...prev, [deedId]: '' }));
   };
@@ -441,6 +468,14 @@ export const CosmicFeed: React.FC<CosmicFeedProps> = ({
                             <p className="text-slate-200">{comment.text}</p>
                           </div>
                         ))}
+                      </div>
+                    )}
+
+                    {/* Auto-Mod Comment Alert Banner */}
+                    {commentErrors[deed.id] && (
+                      <div className="bg-rose-950/80 border border-rose-500/50 rounded-xl px-3 py-2 flex items-center gap-2 text-xs text-rose-200 animate-pulse">
+                        <ShieldAlert className="w-4 h-4 text-rose-400 shrink-0" />
+                        <span className="font-mono">{commentErrors[deed.id]}</span>
                       </div>
                     )}
 

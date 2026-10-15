@@ -295,7 +295,10 @@ export const App: React.FC = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(deedData),
     });
-    if (!res.ok) throw new Error('Failed to post deed');
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Failed to post deed');
+    }
     const newDeed = await res.json();
     setDeeds(prev => [newDeed, ...prev.filter(d => d.id !== newDeed.id)]);
   };
@@ -347,6 +350,9 @@ export const App: React.FC = () => {
         }
         return d;
       }));
+    } else {
+      const err = await res.json().catch(() => ({}));
+      showToast(err.error || 'Comment blocked by Auto-Mod', 'VICE');
     }
   };
 

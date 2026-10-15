@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { Deed, Player, Quest, Alignment, KarmicStats } from '../src/types';
+import { moderateContent, moderateTextBundle } from '../src/services/moderator';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'karmakount_cosmic_jwt_secret_2026';
 
@@ -382,6 +383,16 @@ app.post('/api/auth/register', async (req, res) => {
     const cleanUsername = username.trim().startsWith('@') ? username.trim() : `@${username.trim()}`;
     const cleanEmail = email.trim().toLowerCase();
 
+    // Auto-Moderation: Family-Friendly / PG-13 Check
+    const modResult = moderateTextBundle({
+      Username: cleanUsername.replace(/^@/, ''),
+      'Display Name': displayName,
+      Bio: bio
+    });
+    if (!modResult.isValid) {
+      return res.status(400).json({ error: `[Auto-Mod] ${modResult.reason}` });
+    }
+
     // Check unique username and email
     const existing = players.find(
       p => p.username.toLowerCase() === cleanUsername.toLowerCase() || p.email?.toLowerCase() === cleanEmail
@@ -507,6 +518,16 @@ app.post('/api/players', (req, res) => {
     return res.status(400).json({ error: 'Username and display name required' });
   }
 
+  // Auto-Moderation check
+  const modResult = moderateTextBundle({
+    Username: username.replace(/^@/, ''),
+    'Display Name': displayName,
+    Bio: bio
+  });
+  if (!modResult.isValid) {
+    return res.status(400).json({ error: `[Auto-Mod] ${modResult.reason}` });
+  }
+
   const existing = players.find(p => p.username.toLowerCase() === username.toLowerCase());
   if (existing) {
     return res.json(existing);
@@ -566,6 +587,16 @@ app.post('/api/deeds', (req, res) => {
 
   if (!title || !description || !polarity || !actorPlayerId || !reporterPlayerId) {
     return res.status(400).json({ error: 'Missing required deed fields' });
+  }
+
+  // Auto-Moderation: PG-13 & Family-Friendly Check
+  const modResult = moderateTextBundle({
+    Title: title,
+    Description: description,
+    Category: category
+  });
+  if (!modResult.isValid) {
+    return res.status(400).json({ error: `[Auto-Mod] ${modResult.reason}` });
   }
 
   // Base karma values by tier
@@ -735,6 +766,12 @@ app.post('/api/deeds/:id/comments', (req, res) => {
 
   if (!playerId || !text?.trim()) {
     return res.status(400).json({ error: 'Player ID and text required' });
+  }
+
+  // Auto-Moderation: Family-Friendly / PG-13 Check
+  const modResult = moderateContent(text.trim());
+  if (!modResult.isValid) {
+    return res.status(400).json({ error: `[Auto-Mod] ${modResult.reason}` });
   }
 
   const deed = deeds.find(d => d.id === deedId);

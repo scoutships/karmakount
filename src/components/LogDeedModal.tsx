@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Player, DeedPolarity, ImpactTier } from '../types';
-import { X, Sparkles, Flame, CheckCircle2, AlertTriangle, MapPin, Camera, User, Users } from 'lucide-react';
+import { X, Sparkles, Flame, CheckCircle2, AlertTriangle, MapPin, Camera, User, Users, ShieldAlert, ShieldCheck } from 'lucide-react';
 import { soundManager } from '../services/sound';
+import { moderateTextBundle } from '../services/moderator';
 import confetti from 'canvas-confetti';
 
 interface LogDeedModalProps {
@@ -43,6 +44,13 @@ export const LogDeedModal: React.FC<LogDeedModalProps> = ({
   const [category, setCategory] = useState('Altruism & Charity');
   const [proofImage, setProofImage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  // Live Auto-Mod check
+  const autoMod = moderateTextBundle({
+    Title: title,
+    Description: description,
+  });
 
   if (!isOpen) return null;
 
@@ -90,6 +98,15 @@ export const LogDeedModal: React.FC<LogDeedModalProps> = ({
     e.preventDefault();
     if (!title.trim() || !description.trim()) return;
 
+    setSubmitError(null);
+
+    // Auto-Mod check prior to network call
+    if (!autoMod.isValid) {
+      setSubmitError(autoMod.reason || 'Deed blocked by Auto-Mod. Please adhere to PG-13 guidelines.');
+      soundManager.playViceRumble();
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const isSelf = reportMode === 'SELF';
@@ -128,9 +145,12 @@ export const LogDeedModal: React.FC<LogDeedModalProps> = ({
       // Reset and close
       setTitle('');
       setDescription('');
+      setSubmitError(null);
       onClose();
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to submit deed:', err);
+      setSubmitError(err?.message || 'Failed to submit deed. Please review your entry.');
+      soundManager.playViceRumble();
     } finally {
       setIsSubmitting(false);
     }
@@ -149,9 +169,13 @@ export const LogDeedModal: React.FC<LogDeedModalProps> = ({
 
         {/* Modal Title */}
         <div className="mb-6">
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex flex-wrap items-center gap-2 mb-1">
             <span className="text-[10px] uppercase font-mono tracking-widest text-amber-400 font-bold bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30">
               The Cosmic Ledger
+            </span>
+            <span className="text-[10px] uppercase font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30 flex items-center gap-1">
+              <ShieldCheck className="w-3 h-3 text-emerald-400" />
+              <span>Auto-Mod: PG-13 & Family Friendly</span>
             </span>
           </div>
           <h2 className="text-2xl font-bold font-cinzel text-white tracking-wide">
@@ -364,18 +388,48 @@ export const LogDeedModal: React.FC<LogDeedModalProps> = ({
             </div>
           </div>
 
+          {/* Live Auto-Mod Warning Banner if triggered */}
+          {(!autoMod.isValid && (title.trim() || description.trim())) && (
+            <div className="bg-rose-950/80 border border-rose-500/60 rounded-2xl p-4 flex items-start gap-3 text-xs text-rose-200">
+              <ShieldAlert className="w-5 h-5 text-rose-400 shrink-0 mt-0.5 animate-pulse" />
+              <div>
+                <strong className="block text-rose-300 font-bold font-mono uppercase tracking-wide">
+                  Auto-Mod Rule Triggered ({autoMod.violation}):
+                </strong>
+                <p className="mt-0.5 text-rose-200 leading-relaxed">{autoMod.reason}</p>
+                <p className="mt-1.5 text-[10px] text-rose-300/70 font-mono">
+                  KarmaKount maintains a family-friendly PG-13 community. Prohibited: gibberish mash, extreme violence/murder, sexually explicit acts, slurs, profanity, and illicit drugs.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Submission Network / Server Error Banner */}
+          {submitError && (
+            <div className="bg-rose-950/90 border border-rose-500 rounded-2xl p-3.5 flex items-center gap-2.5 text-xs text-rose-200">
+              <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+              <span>{submitError}</span>
+            </div>
+          )}
+
           {/* Submit Button */}
           <button
             type="submit"
-            disabled={isSubmitting}
-            className={`w-full py-3.5 rounded-2xl font-bold text-sm uppercase tracking-wider transition shadow-xl active:scale-[0.98] flex items-center justify-center gap-2 ${
+            disabled={isSubmitting || (!autoMod.isValid && Boolean(title.trim() || description.trim()))}
+            className={`w-full py-3.5 rounded-2xl font-bold text-sm uppercase tracking-wider transition shadow-xl active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${
               polarity === 'VIRTUE'
                 ? 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 shadow-amber-500/20'
                 : 'bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 text-white shadow-rose-600/20'
             }`}
           >
             <CheckCircle2 className="w-4 h-4" />
-            <span>{isSubmitting ? 'Inscribing in Cosmic Ledger...' : 'Inscribe Deed To Ledger'}</span>
+            <span>
+              {isSubmitting
+                ? 'Inscribing in Cosmic Ledger...'
+                : !autoMod.isValid && (title.trim() || description.trim())
+                ? `Blocked by Auto-Mod (${autoMod.violation})`
+                : 'Inscribe Deed To Ledger'}
+            </span>
           </button>
         </form>
       </div>
