@@ -187,8 +187,38 @@ export const LoginPage: React.FC<LoginPageProps> = ({
 
           {/* Error Message */}
           {error && (
-            <div className="mb-4 p-3 rounded-xl bg-rose-950/70 border border-rose-500/40 text-xs text-rose-300 font-medium">
-              {error}
+            <div className="mb-4 p-3.5 rounded-2xl bg-rose-950/80 border border-rose-500/50 text-xs text-rose-200">
+              <div className="font-semibold">{error}</div>
+              {error.includes('No player found') && (
+                <div className="mt-2.5 pt-2.5 border-t border-rose-900/60">
+                  <p className="text-[11px] text-rose-300/90 leading-relaxed mb-2">
+                    Did you create this account recently? If the server restarted during our latest update, click below to immediately inscribe and register it with this password:
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const isEmail = loginIdentifier.includes('@') && loginIdentifier.includes('.');
+                      if (isEmail) {
+                        setRegEmail(loginIdentifier);
+                        setRegUsername(loginIdentifier.split('@')[0]);
+                        setRegDisplayName(loginIdentifier.split('@')[0]);
+                      } else {
+                        setRegUsername(loginIdentifier.replace(/^@/, ''));
+                        setRegDisplayName(loginIdentifier.replace(/^@/, ''));
+                      }
+                      if (loginPassword) {
+                        setRegPassword(loginPassword);
+                      }
+                      setTab('REGISTER');
+                      setError(null);
+                    }}
+                    className="w-full py-2 px-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs uppercase tracking-wider rounded-xl transition shadow flex items-center justify-center gap-1.5 active:scale-95"
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Click Here to Register "{loginIdentifier}" Now ➔</span>
+                  </button>
+                </div>
+              )}
             </div>
           )}
 
