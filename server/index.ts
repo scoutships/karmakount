@@ -7,7 +7,7 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { Deed, Player, Quest, Alignment, KarmicStats } from '../src/types';
+import { Deed, Player, Quest, Alignment, KarmicStats, FaucetClaim, FaucetNetwork } from '../src/types';
 import { moderateContent, moderateTextBundle } from '../src/services/moderator';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'karmakount_cosmic_jwt_secret_2026';
@@ -339,11 +339,54 @@ let passwords: Record<string, string> = {
   'p-4': bcrypt.hashSync('password123', 10),
 };
 
+// Web3 Crypto Faucet Claims History
+let faucetClaims: FaucetClaim[] = [
+  {
+    id: 'fc-1',
+    playerId: 'p-1',
+    playerDisplayName: 'Sophia Valerius',
+    playerAvatar: '🕊️',
+    recipientAddress: '0x8f29C0219D3B9c339798C512F9c646B63B66917E',
+    network: 'BASE_SEPOLIA',
+    amount: 75,
+    tokenSymbol: '$KARMA',
+    txHash: '0x7e83f912c9a4b88d2f701c3e59a7214b98c39e240a1b6c7d8e9f0a1b2c3d4e5f',
+    claimedAt: new Date(Date.now() - 3600000 * 2).toISOString(),
+    multiplier: 3.0
+  },
+  {
+    id: 'fc-2',
+    playerId: 'p-founder-karmakount',
+    playerDisplayName: 'KarmaKount',
+    playerAvatar: '👑',
+    recipientAddress: '0x3F5CE5FBFe3E9af3971dD833D26bA9b5C936f0bE',
+    network: 'KARMA_CHAIN',
+    amount: 150,
+    tokenSymbol: '$KARMA',
+    txHash: '0x9b4c8a7e2f1d6b0c5e3a8d9f4b1e7c2a6f8b0d3e5a7c9f1b3e5a7c9f1b3e5a7c',
+    claimedAt: new Date(Date.now() - 3600000 * 5).toISOString(),
+    multiplier: 3.0
+  },
+  {
+    id: 'fc-3',
+    playerId: 'p-2',
+    playerDisplayName: 'Kaelen Drake',
+    playerAvatar: '🦇',
+    recipientAddress: '0x1234567890123456789012345678901234567890',
+    network: 'POLYGON_AMOY',
+    amount: 12.5,
+    tokenSymbol: '$KARMA',
+    txHash: '0x1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b',
+    claimedAt: new Date(Date.now() - 3600000 * 9).toISOString(),
+    multiplier: 0.5
+  }
+];
+
 const DB_FILE = path.resolve('server/karma_db.json');
 
 function saveDb() {
   try {
-    fs.writeFileSync(DB_FILE, JSON.stringify({ players, passwords, deeds, quests }, null, 2));
+    fs.writeFileSync(DB_FILE, JSON.stringify({ players, passwords, deeds, quests, faucetClaims }, null, 2));
   } catch (err) {
     console.error('Error saving karma_db:', err);
   }
@@ -357,7 +400,8 @@ function loadDb() {
       if (data.passwords) passwords = { ...passwords, ...data.passwords };
       if (data.deeds && data.deeds.length > 0) deeds = data.deeds;
       if (data.quests && data.quests.length > 0) quests = data.quests;
-      console.log(`[KARMA DB] Loaded ${players.length} players and ${deeds.length} deeds from disk.`);
+      if (data.faucetClaims && data.faucetClaims.length > 0) faucetClaims = data.faucetClaims;
+      console.log(`[KARMA DB] Loaded ${players.length} players, ${deeds.length} deeds, and ${faucetClaims.length} faucet claims from disk.`);
     }
   } catch (err) {
     console.error('Error loading karma_db:', err);
@@ -976,6 +1020,127 @@ app.post('/api/simulate-encounter', (req, res) => {
   res.json(newDeed);
 });
 
+// ==================== CRYPTO FAUCET API ====================
+
+// Check Faucet status, cooldown, multiplier & recent claims
+app.get('/api/faucet/status/:playerId', (req, res) => {
+  const { playerId } = req.params;
+  const player = players.find(p => p.id === playerId) || players[0];
+
+  const lastClaim = faucetClaims.find(c => c.playerId === player.id);
+  const cooldownPeriodMs = 12 * 60 * 60 * 1000; // 12h cooldown
+  const now = Date.now();
+
+  let cooldownSecondsRemaining = 0;
+  if (lastClaim) {
+    const elapsed = now - new Date(lastClaim.claimedAt).getTime();
+    if (elapsed < cooldownPeriodMs) {
+      cooldownSecondsRemaining = Math.ceil((cooldownPeriodMs - elapsed) / 1000);
+    }
+  }
+
+  let multiplier = 1.0;
+  let isDebtLocked = false;
+  if (player.karmaScore >= 1000) multiplier = 3.0;
+  else if (player.karmaScore >= 250) multiplier = 2.0;
+  else if (player.karmaScore >= -99) multiplier = 1.0;
+  else if (player.karmaScore >= -500) multiplier = 0.5;
+  else {
+    multiplier = 0.0;
+    isDebtLocked = true;
+  }
+
+  const baseAmount = 25;
+  const totalClaimable = Math.round(baseAmount * multiplier * 10) / 10;
+  const canClaim = cooldownSecondsRemaining === 0 && !isDebtLocked;
+
+  res.json({
+    canClaim,
+    isDebtLocked,
+    cooldownSecondsRemaining,
+    lastClaimAt: lastClaim?.claimedAt || null,
+    baseAmount,
+    multiplier,
+    totalClaimable,
+    tokenBalance: player.cryptoBalance || 0,
+    walletAddress: player.walletAddress || `0x${player.id.replace(/[^a-f0-9]/gi, '')}9bF390c5e3a8d`,
+    tokenSymbol: '$KARMA',
+    recentClaims: faucetClaims.slice(0, 15)
+  });
+});
+
+// Dispense tokens from faucet
+app.post('/api/faucet/claim', (req, res) => {
+  const { playerId, walletAddress, network } = req.body;
+  if (!playerId) {
+    return res.status(400).json({ error: 'Player ID required' });
+  }
+
+  const player = players.find(p => p.id === playerId);
+  if (!player) return res.status(404).json({ error: 'Player not found' });
+
+  if (player.karmaScore < -500) {
+    return res.status(403).json({ error: 'Karmic Debt: Complete an Atonement Bounty before accessing the Faucet.' });
+  }
+
+  // Check cooldown
+  const lastClaim = faucetClaims.find(c => c.playerId === player.id);
+  const cooldownPeriodMs = 12 * 60 * 60 * 1000;
+  if (lastClaim) {
+    const elapsed = Date.now() - new Date(lastClaim.claimedAt).getTime();
+    if (elapsed < cooldownPeriodMs) {
+      const waitHours = Math.ceil((cooldownPeriodMs - elapsed) / (1000 * 60 * 60));
+      return res.status(429).json({ error: `Faucet is on cooldown. Please wait ${waitHours}h before dispensing again.` });
+    }
+  }
+
+  // Compute multiplier
+  let multiplier = 1.0;
+  if (player.karmaScore >= 1000) multiplier = 3.0;
+  else if (player.karmaScore >= 250) multiplier = 2.0;
+  else if (player.karmaScore >= -99) multiplier = 1.0;
+  else if (player.karmaScore >= -500) multiplier = 0.5;
+
+  const baseAmount = 25;
+  const amount = Math.round(baseAmount * multiplier * 10) / 10;
+
+  // Cryptographic transaction hash
+  const randomHex = Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
+  const txHash = `0x${randomHex}`;
+  const address = walletAddress?.trim() || player.walletAddress || `0x${player.id.replace(/[^a-f0-9]/gi, '')}9bF390c5e3a8d`;
+
+  const newClaim: FaucetClaim = {
+    id: `fc-${Date.now()}`,
+    playerId: player.id,
+    playerDisplayName: player.displayName,
+    playerAvatar: player.avatar,
+    recipientAddress: address,
+    network: (network as FaucetNetwork) || 'BASE_SEPOLIA',
+    amount,
+    tokenSymbol: '$KARMA',
+    txHash,
+    claimedAt: new Date().toISOString(),
+    multiplier
+  };
+
+  faucetClaims.unshift(newClaim);
+  player.cryptoBalance = Math.round(((player.cryptoBalance || 0) + amount) * 100) / 100;
+  player.walletAddress = address;
+
+  // Reward participation karma
+  player.karmaScore += 5;
+  player.exp += 15;
+
+  saveDb();
+  broadcast('FAUCET_CLAIMED', { claim: newClaim, player });
+
+  res.status(201).json({
+    claim: newClaim,
+    player,
+    tokenBalance: player.cryptoBalance
+  });
+});
+
 // WebSocket Connection handling
 wss.on('connection', (ws) => {
   ws.send(JSON.stringify({
@@ -983,7 +1148,8 @@ wss.on('connection', (ws) => {
     payload: {
       players,
       deeds,
-      quests
+      quests,
+      faucetClaims: faucetClaims.slice(0, 15)
     }
   }));
 

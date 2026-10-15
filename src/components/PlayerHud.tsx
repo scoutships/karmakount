@@ -1,6 +1,6 @@
 import React from 'react';
 import { Player } from '../types';
-import { Shield, Sparkles, Flame, Eye, Award, MapPin, Zap, Share2 } from 'lucide-react';
+import { Shield, Sparkles, Flame, Eye, Award, MapPin, Zap, Share2, Droplets } from 'lucide-react';
 
 interface PlayerHudProps {
   player: Player;
@@ -8,6 +8,7 @@ interface PlayerHudProps {
   onSimulateEncounter: () => void;
   onOpenAtonement: () => void;
   onShareProfile?: () => void;
+  onOpenFaucet?: () => void;
   isSimulating: boolean;
 }
 
@@ -17,6 +18,7 @@ export const PlayerHud: React.FC<PlayerHudProps> = ({
   onSimulateEncounter,
   onOpenAtonement,
   onShareProfile,
+  onOpenFaucet,
   isSimulating,
 }) => {
   // Compute aura styling
@@ -147,6 +149,29 @@ export const PlayerHud: React.FC<PlayerHudProps> = ({
                 style={{ width: `${xpPercent}%` }} 
               />
             </div>
+          </div>
+
+          {/* $KARMA Crypto Token balance banner */}
+          <div className="bg-slate-950/80 border border-cyan-900/60 rounded-xl px-2.5 py-1.5 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-base select-none">💎</span>
+              <div>
+                <span className="text-[9px] uppercase font-mono text-cyan-400 block font-bold leading-none tracking-wider">$KARMA Token Vault</span>
+                <span className="text-xs font-mono font-bold text-white mt-0.5 inline-block">
+                  {player.cryptoBalance || 0} <span className="text-[10px] text-cyan-300">$KARMA</span>
+                </span>
+              </div>
+            </div>
+            {onOpenFaucet && (
+              <button
+                onClick={onOpenFaucet}
+                className="px-2 py-1 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/40 rounded-lg text-[10px] font-mono font-bold text-cyan-300 transition flex items-center gap-1 active:scale-95 shadow-sm"
+                title="Claim free testnet $KARMA crypto tokens"
+              >
+                <Droplets className="w-3 h-3 text-cyan-400" />
+                <span>Faucet</span>
+              </button>
+            )}
           </div>
 
           {/* Detailed stats chips */}

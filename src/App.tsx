@@ -12,6 +12,7 @@ import { SigilScannerModal } from './components/SigilScannerModal';
 import { AuthModal } from './components/AuthModal';
 import { LoginPage } from './components/LoginPage';
 import { ShareModal } from './components/ShareModal';
+import { CryptoFaucetModal } from './components/CryptoFaucetModal';
 import { soundManager } from './services/sound';
 import { NativePlatformBridge } from './services/native';
 import { Sparkles, Flame, Shield, X, Bell } from 'lucide-react';
@@ -27,6 +28,7 @@ export const App: React.FC = () => {
   const [isLogModalOpen, setIsLogModalOpen] = useState(false);
   const [isSigilModalOpen, setIsSigilModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isFaucetModalOpen, setIsFaucetModalOpen] = useState(false);
   const [shareData, setShareData] = useState<{
     isOpen: boolean;
     title: string;
@@ -224,6 +226,19 @@ export const App: React.FC = () => {
             case 'PLAYER_JOINED': {
               const newPlayer = payload;
               setPlayers(prev => [...prev.filter(p => p.id !== newPlayer.id), newPlayer]);
+              break;
+            }
+
+            case 'FAUCET_CLAIMED': {
+              const { claim, player } = payload;
+              if (player) {
+                setPlayers(prev => prev.map(p => p.id === player.id ? { ...p, ...player } : p));
+                if (currentPlayer?.id === player.id) {
+                  setCurrentPlayer(prev => prev ? { ...prev, ...player } : null);
+                }
+              }
+              soundManager.playVirtueChime();
+              showToast(`🚰 Faucet Drop: ${claim.playerDisplayName} claimed ${claim.amount} ${claim.tokenSymbol}!`, 'VIRTUE');
               break;
             }
           }
@@ -470,6 +485,7 @@ export const App: React.FC = () => {
         onOpenLogModal={() => setIsLogModalOpen(true)}
         onOpenSigilModal={() => setIsSigilModalOpen(true)}
         onOpenAuthModal={() => setIsAuthModalOpen(true)}
+        onOpenFaucetModal={() => setIsFaucetModalOpen(true)}
         onSignOut={handleSignOut}
         isAuthenticated={isAuthenticated}
         isWsConnected={isWsConnected}
@@ -483,6 +499,7 @@ export const App: React.FC = () => {
         <PlayerHud
           player={currentPlayer}
           onOpenSigilModal={() => setIsSigilModalOpen(true)}
+          onOpenFaucet={() => setIsFaucetModalOpen(true)}
           onSimulateEncounter={handleSimulateEncounter}
           onOpenAtonement={() => setActiveTab('quests')}
           onShareProfile={() => {
@@ -579,6 +596,13 @@ export const App: React.FC = () => {
           url={shareData.url || 'https://karmakount.com'}
         />
       )}
+
+      <CryptoFaucetModal
+        isOpen={isFaucetModalOpen}
+        onClose={() => setIsFaucetModalOpen(false)}
+        currentPlayer={currentPlayer}
+        onOpenShare={(data) => setShareData({ isOpen: true, ...data })}
+      />
     </div>
   );
 };

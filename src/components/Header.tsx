@@ -1,6 +1,6 @@
 import React from 'react';
 import { Player, KarmicStats } from '../types';
-import { Scale, Volume2, VolumeX, QrCode, Shield, Sparkles, Flame, Users, Radio, LogIn, LogOut, UserCheck } from 'lucide-react';
+import { Scale, Volume2, VolumeX, QrCode, Shield, Sparkles, Flame, Users, Radio, LogIn, LogOut, UserCheck, Droplets } from 'lucide-react';
 import { soundManager } from '../services/sound';
 
 interface HeaderProps {
@@ -13,6 +13,7 @@ interface HeaderProps {
   onOpenLogModal: () => void;
   onOpenSigilModal: () => void;
   onOpenAuthModal: () => void;
+  onOpenFaucetModal?: () => void;
   onSignOut: () => void;
   isAuthenticated: boolean;
   isWsConnected: boolean;
@@ -30,6 +31,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenLogModal,
   onOpenSigilModal,
   onOpenAuthModal,
+  onOpenFaucetModal,
   onSignOut,
   isAuthenticated,
   isWsConnected,
@@ -205,6 +207,22 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <LogIn className="w-3.5 h-3.5" />
               <span>Login / Register</span>
+            </button>
+          )}
+
+          {onOpenFaucetModal && (
+            <button
+              onClick={onOpenFaucetModal}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-cyan-500/40 bg-cyan-950/40 hover:bg-cyan-900/60 text-cyan-300 text-xs font-semibold transition hover:border-cyan-400 shadow-sm shadow-cyan-500/10 active:scale-95"
+              title="Dispense Free $KARMA Crypto Tokens"
+            >
+              <Droplets className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+              <span className="hidden sm:inline">Faucet</span>
+              {typeof currentPlayer.cryptoBalance === 'number' && currentPlayer.cryptoBalance > 0 && (
+                <span className="text-[10px] font-mono bg-cyan-900/70 border border-cyan-700/50 px-1.5 py-0.2 rounded text-cyan-200">
+                  {currentPlayer.cryptoBalance} $K
+                </span>
+              )}
             </button>
           )}
 

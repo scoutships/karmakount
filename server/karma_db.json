@@ -96,12 +96,12 @@
       "avatar": "☯️",
       "avatarColor": "from-teal-400 to-cyan-700",
       "bio": "Action without attachment. The ledger balances all things in time.",
-      "karmaScore": 35,
+      "karmaScore": 40,
       "alignment": "MORTAL_DRIFTER",
       "title": "Wayfarer of the Threshold",
       "faction": "EQUILIBRIUM",
       "level": 11,
-      "exp": 280,
+      "exp": 295,
       "virtuesLogged": 16,
       "vicesLogged": 15,
       "deedsWitnessed": 112,
@@ -128,7 +128,9 @@
         "lng": -122.392
       },
       "qrPayload": "KARMA_USER:p-3:@ZenTao",
-      "isOnline": false
+      "isOnline": false,
+      "cryptoBalance": 25,
+      "walletAddress": "0x71C...a89"
     },
     {
       "id": "p-4",
@@ -549,6 +551,60 @@
       "completedBy": [],
       "icon": "☕",
       "locationHint": "Local coffee roastery or tea shop"
+    }
+  ],
+  "faucetClaims": [
+    {
+      "id": "fc-1792041821505",
+      "playerId": "p-3",
+      "playerDisplayName": "Master Chen",
+      "playerAvatar": "☯️",
+      "recipientAddress": "0x71C...a89",
+      "network": "BASE_SEPOLIA",
+      "amount": 25,
+      "tokenSymbol": "$KARMA",
+      "txHash": "0xe737be3f7cfee424ec04890b4112537452029457673349c504679d2b3a2c4764",
+      "claimedAt": "2026-10-15T05:23:41.505Z",
+      "multiplier": 1
+    },
+    {
+      "id": "fc-1",
+      "playerId": "p-1",
+      "playerDisplayName": "Sophia Valerius",
+      "playerAvatar": "🕊️",
+      "recipientAddress": "0x8f29C0219D3B9c339798C512F9c646B63B66917E",
+      "network": "BASE_SEPOLIA",
+      "amount": 75,
+      "tokenSymbol": "$KARMA",
+      "txHash": "0x7e83f912c9a4b88d2f701c3e59a7214b98c39e240a1b6c7d8e9f0a1b2c3d4e5f",
+      "claimedAt": "2026-10-15T03:23:25.444Z",
+      "multiplier": 3
+    },
+    {
+      "id": "fc-2",
+      "playerId": "p-founder-karmakount",
+      "playerDisplayName": "KarmaKount",
+      "playerAvatar": "👑",
+      "recipientAddress": "0x3F5CE5FBFe3E9af3971dD833D26bA9b5C936f0bE",
+      "network": "KARMA_CHAIN",
+      "amount": 150,
+      "tokenSymbol": "$KARMA",
+      "txHash": "0x9b4c8a7e2f1d6b0c5e3a8d9f4b1e7c2a6f8b0d3e5a7c9f1b3e5a7c9f1b3e5a7c",
+      "claimedAt": "2026-10-15T00:23:25.444Z",
+      "multiplier": 3
+    },
+    {
+      "id": "fc-3",
+      "playerId": "p-2",
+      "playerDisplayName": "Kaelen Drake",
+      "playerAvatar": "🦇",
+      "recipientAddress": "0x1234567890123456789012345678901234567890",
+      "network": "POLYGON_AMOY",
+      "amount": 12.5,
+      "tokenSymbol": "$KARMA",
+      "txHash": "0x1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b",
+      "claimedAt": "2026-10-14T20:23:25.444Z",
+      "multiplier": 0.5
     }
   ]
 }

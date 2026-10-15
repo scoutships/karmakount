@@ -47,6 +47,8 @@ export interface Player {
   qrPayload: string;
   isOnline: boolean;
   avatarColor: string;
+  cryptoBalance?: number; // $KARMA crypto tokens
+  walletAddress?: string;
 }
 
 export interface AuthResponse {
@@ -121,4 +123,20 @@ export interface KarmicStats {
   totalVicesLogged: number;
   activePlayersToday: number;
   globalPurityPercent: number;
+}
+
+export type FaucetNetwork = 'BASE_SEPOLIA' | 'POLYGON_AMOY' | 'ARBITRUM_SEPOLIA' | 'SOLANA_DEVNET' | 'KARMA_CHAIN';
+
+export interface FaucetClaim {
+  id: string;
+  playerId: string;
+  playerDisplayName: string;
+  playerAvatar: string;
+  recipientAddress: string;
+  network: FaucetNetwork;
+  amount: number;
+  tokenSymbol: string;
+  txHash: string;
+  claimedAt: string;
+  multiplier: number;
 }
