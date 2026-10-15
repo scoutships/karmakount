@@ -10,6 +10,7 @@ import { Leaderboard } from './components/LeaderboardModal';
 import { LogDeedModal } from './components/LogDeedModal';
 import { SigilScannerModal } from './components/SigilScannerModal';
 import { AuthModal } from './components/AuthModal';
+import { LoginPage } from './components/LoginPage';
 import { soundManager } from './services/sound';
 import { NativePlatformBridge } from './services/native';
 import { Sparkles, Flame, Shield, X, Bell } from 'lucide-react';
@@ -27,6 +28,7 @@ export const App: React.FC = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authToken, setAuthToken] = useState<string | null>(() => localStorage.getItem('karma_auth_token'));
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => Boolean(localStorage.getItem('karma_auth_token')));
+  const [isGuestMode, setIsGuestMode] = useState<boolean>(() => localStorage.getItem('karma_guest_mode') === 'true');
 
   const [isSimulating, setIsSimulating] = useState(false);
   const [isWsConnected, setIsWsConnected] = useState(false);
@@ -249,6 +251,8 @@ export const App: React.FC = () => {
     setCurrentPlayer(player);
     setAuthToken(token);
     setIsAuthenticated(true);
+    setIsGuestMode(false);
+    localStorage.removeItem('karma_guest_mode');
     localStorage.setItem('karma_auth_token', token);
     localStorage.setItem('karma_active_player_id', player.id);
     showToast(`✨ Welcome to KarmaKount, ${player.displayName}!`, 'VIRTUE');
@@ -256,8 +260,10 @@ export const App: React.FC = () => {
 
   const handleSignOut = () => {
     localStorage.removeItem('karma_auth_token');
+    localStorage.removeItem('karma_guest_mode');
     setAuthToken(null);
     setIsAuthenticated(false);
+    setIsGuestMode(false);
     showToast('Signed out of soul session.', 'INFO');
   };
 
@@ -395,6 +401,20 @@ export const App: React.FC = () => {
         <h2 className="text-xl font-cinzel font-bold text-amber-300">Synchronizing Cosmic Ledger...</h2>
         <p className="text-xs text-slate-500 font-mono mt-1">Connecting to IRL game nodes...</p>
       </div>
+    );
+  }
+
+  // Dedicated Full-Page Login & Register Gateway
+  if (!isAuthenticated && !isGuestMode) {
+    return (
+      <LoginPage
+        onLoginSuccess={handleLoginSuccess}
+        onContinueAsGuest={() => {
+          setIsGuestMode(true);
+          localStorage.setItem('karma_guest_mode', 'true');
+          showToast('Browsing Cosmic Ledger as guest spectator', 'INFO');
+        }}
+      />
     );
   }
 
