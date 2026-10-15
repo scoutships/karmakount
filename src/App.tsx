@@ -11,6 +11,7 @@ import { LogDeedModal } from './components/LogDeedModal';
 import { SigilScannerModal } from './components/SigilScannerModal';
 import { AuthModal } from './components/AuthModal';
 import { LoginPage } from './components/LoginPage';
+import { ShareModal } from './components/ShareModal';
 import { soundManager } from './services/sound';
 import { NativePlatformBridge } from './services/native';
 import { Sparkles, Flame, Shield, X, Bell } from 'lucide-react';
@@ -26,6 +27,14 @@ export const App: React.FC = () => {
   const [isLogModalOpen, setIsLogModalOpen] = useState(false);
   const [isSigilModalOpen, setIsSigilModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [shareData, setShareData] = useState<{
+    isOpen: boolean;
+    title: string;
+    text: string;
+    polarity?: 'VIRTUE' | 'VICE' | 'NEUTRAL';
+    badgeText?: string;
+    url?: string;
+  } | null>(null);
   const [authToken, setAuthToken] = useState<string | null>(() => localStorage.getItem('karma_auth_token'));
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => Boolean(localStorage.getItem('karma_auth_token')));
   const [isGuestMode, setIsGuestMode] = useState<boolean>(() => localStorage.getItem('karma_guest_mode') === 'true');
@@ -470,6 +479,16 @@ export const App: React.FC = () => {
           onOpenSigilModal={() => setIsSigilModalOpen(true)}
           onSimulateEncounter={handleSimulateEncounter}
           onOpenAtonement={() => setActiveTab('quests')}
+          onShareProfile={() => {
+            setShareData({
+              isOpen: true,
+              title: `${currentPlayer.displayName}'s KarmaKount Soul Profile`,
+              text: `⚡ Check out my IRL KarmaKount Soul Record: ${currentPlayer.displayName} (@${currentPlayer.username}) - ${currentPlayer.title} with ${currentPlayer.karmaScore > 0 ? `+${currentPlayer.karmaScore}` : currentPlayer.karmaScore} Karma Points! Faction: ${currentPlayer.faction}. Alignment: ${currentPlayer.alignment.replace(/_/g, ' ')}.`,
+              polarity: currentPlayer.karmaScore >= 0 ? 'VIRTUE' : 'VICE',
+              badgeText: `${currentPlayer.karmaScore > 0 ? `+${currentPlayer.karmaScore}` : currentPlayer.karmaScore} Karma`,
+              url: 'https://karmakount.com',
+            });
+          }}
           isSimulating={isSimulating}
         />
 
@@ -481,6 +500,7 @@ export const App: React.FC = () => {
             onVote={handleVote}
             onReact={handleReact}
             onAddComment={handleAddComment}
+            onOpenShare={(data) => setShareData({ isOpen: true, ...data })}
           />
         )}
 
@@ -541,6 +561,18 @@ export const App: React.FC = () => {
         onClose={() => setIsAuthModalOpen(false)}
         onLoginSuccess={handleLoginSuccess}
       />
+
+      {shareData && (
+        <ShareModal
+          isOpen={shareData.isOpen}
+          onClose={() => setShareData(null)}
+          title={shareData.title}
+          text={shareData.text}
+          polarity={shareData.polarity}
+          badgeText={shareData.badgeText}
+          url={shareData.url || 'https://karmakount.com'}
+        />
+      )}
     </div>
   );
 };

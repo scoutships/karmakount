@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Deed, Player, DeedPolarity, DeedStatus } from '../types';
 import { 
   Sparkles, Flame, Shield, Check, XCircle, MessageSquare, 
-  MapPin, Clock, Filter, Search, ThumbsUp, Send, UserCheck, AlertCircle 
+  MapPin, Clock, Filter, Search, ThumbsUp, Send, UserCheck, AlertCircle, Share2 
 } from 'lucide-react';
 import { soundManager } from '../services/sound';
 import confetti from 'canvas-confetti';
@@ -13,6 +13,7 @@ interface CosmicFeedProps {
   onVote: (deedId: string, vote: 'VOUCH' | 'CAP') => Promise<void>;
   onReact: (deedId: string, reaction: 'blessing' | 'cap' | 'fire') => Promise<void>;
   onAddComment: (deedId: string, text: string) => Promise<void>;
+  onOpenShare?: (data: { title: string; text: string; polarity?: 'VIRTUE' | 'VICE' | 'NEUTRAL'; badgeText?: string }) => void;
 }
 
 export const CosmicFeed: React.FC<CosmicFeedProps> = ({
@@ -21,6 +22,7 @@ export const CosmicFeed: React.FC<CosmicFeedProps> = ({
   onVote,
   onReact,
   onAddComment,
+  onOpenShare,
 }) => {
   const [filter, setFilter] = useState<'ALL' | 'VIRTUE' | 'VICE' | 'PENDING' | 'NEAR'>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
@@ -392,6 +394,24 @@ export const CosmicFeed: React.FC<CosmicFeedProps> = ({
                     >
                       <MessageSquare className="w-3.5 h-3.5" />
                       <span>{deed.comments.length}</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        if (onOpenShare) {
+                          onOpenShare({
+                            title: deed.title,
+                            text: `⚖️ [KarmaKount IRL] ${deed.polarity === 'VIRTUE' ? '🕊️ Virtue' : '🔥 Vice'} Recorded: "${deed.title}" by ${deed.actorPlayerName} (${deed.karmaValue > 0 ? `+${deed.karmaValue}` : deed.karmaValue} Karma)!`,
+                            polarity: deed.polarity,
+                            badgeText: `${deed.karmaValue > 0 ? `+${deed.karmaValue}` : deed.karmaValue} Karma`,
+                          });
+                        }
+                      }}
+                      className="px-2.5 py-1 bg-slate-950 hover:bg-slate-800 rounded-lg border border-slate-800 text-xs text-slate-400 hover:text-amber-400 transition flex items-center gap-1"
+                      title="Share to X, Threads, Reddit, Instagram, etc."
+                    >
+                      <Share2 className="w-3.5 h-3.5 text-amber-400" />
+                      <span className="hidden sm:inline font-bold text-[11px]">Share</span>
                     </button>
                   </div>
                 </div>

@@ -1,12 +1,13 @@
 import React from 'react';
 import { Player } from '../types';
-import { Shield, Sparkles, Flame, Eye, Award, MapPin, Zap } from 'lucide-react';
+import { Shield, Sparkles, Flame, Eye, Award, MapPin, Zap, Share2 } from 'lucide-react';
 
 interface PlayerHudProps {
   player: Player;
   onOpenSigilModal: () => void;
   onSimulateEncounter: () => void;
   onOpenAtonement: () => void;
+  onShareProfile?: () => void;
   isSimulating: boolean;
 }
 
@@ -15,6 +16,7 @@ export const PlayerHud: React.FC<PlayerHudProps> = ({
   onOpenSigilModal,
   onSimulateEncounter,
   onOpenAtonement,
+  onShareProfile,
   isSimulating,
 }) => {
   // Compute aura styling
@@ -163,16 +165,29 @@ export const PlayerHud: React.FC<PlayerHudProps> = ({
             </div>
           </div>
 
-          {/* Test Action: Trigger Simulated IRL Incident */}
-          <button
-            onClick={onSimulateEncounter}
-            disabled={isSimulating}
-            className="w-full py-1.5 px-3 bg-slate-800/80 hover:bg-slate-800 border border-slate-700 rounded-lg text-xs font-medium text-amber-300 hover:text-amber-200 transition flex items-center justify-center gap-1.5 disabled:opacity-50"
-            title="Simulate someone in the real world reporting a deed on you or nearby"
-          >
-            <Zap className={`w-3.5 h-3.5 text-amber-400 ${isSimulating ? 'animate-spin' : ''}`} />
-            <span>{isSimulating ? 'Simulating Encounter...' : 'Simulate IRL Encounter'}</span>
-          </button>
+          {/* Actions: Share & Simulated IRL Incident */}
+          <div className="flex gap-2">
+            {onShareProfile && (
+              <button
+                onClick={onShareProfile}
+                className="flex-1 py-1.5 px-3 bg-gradient-to-r from-amber-500/20 to-purple-500/20 hover:from-amber-500/30 hover:to-purple-500/30 border border-amber-500/40 hover:border-amber-400/60 rounded-lg text-xs font-semibold text-amber-200 transition flex items-center justify-center gap-1.5 shadow-sm"
+                title="Share your Karmic score & status to X, Threads, Bluesky, Instagram, Facebook, Reddit & more"
+              >
+                <Share2 className="w-3.5 h-3.5 text-amber-400" />
+                <span>Share Soul</span>
+              </button>
+            )}
+
+            <button
+              onClick={onSimulateEncounter}
+              disabled={isSimulating}
+              className="flex-1 py-1.5 px-3 bg-slate-800/80 hover:bg-slate-800 border border-slate-700 rounded-lg text-xs font-medium text-amber-300 hover:text-amber-200 transition flex items-center justify-center gap-1.5 disabled:opacity-50"
+              title="Simulate someone in the real world reporting a deed on you or nearby"
+            >
+              <Zap className={`w-3.5 h-3.5 text-amber-400 ${isSimulating ? 'animate-spin' : ''}`} />
+              <span>{isSimulating ? 'Simulating...' : 'IRL Encounter'}</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
