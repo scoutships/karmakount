@@ -198,6 +198,41 @@
       },
       "qrPayload": "KARMA_IRL:p-1792038460738:@NeoSaint",
       "isOnline": true
+    },
+    {
+      "id": "p-founder-karmakount",
+      "email": "skinrip@proton.me",
+      "username": "@karmakount",
+      "displayName": "KarmaKount",
+      "avatar": "👑",
+      "avatarColor": "from-amber-400 to-yellow-600",
+      "bio": "Founder & Genesis Arbiter of the Cosmic Ledger.",
+      "karmaScore": 777,
+      "alignment": "VIRTUOUS_GUARDIAN",
+      "title": "Sentinel of Benevolence",
+      "faction": "LUMEN",
+      "level": 7,
+      "exp": 250,
+      "virtuesLogged": 7,
+      "vicesLogged": 0,
+      "deedsWitnessed": 14,
+      "juryAccuracy": 100,
+      "badges": [
+        {
+          "id": "b-founder-001",
+          "name": "Genesis Arbiter",
+          "icon": "👑",
+          "description": "Architect of KarmaKount",
+          "unlockedAt": "2026-10-15T00:00:00.000Z"
+        }
+      ],
+      "location": {
+        "name": "Genesis Sanctuary",
+        "lat": 37.7749,
+        "lng": -122.4194
+      },
+      "qrPayload": "KARMA_IRL:p-founder-karmakount:@karmakount",
+      "isOnline": true
     }
   ],
   "passwords": {
@@ -205,7 +240,8 @@
     "p-2": "$2b$10$ripyvPzCml7GfkwU.p7v7.Is908m0UnLnDpHg8maPHSo/ho/DxZ72",
     "p-3": "$2b$10$LUSQ/RLaWUS.pMC8gbkqo.kjD7r1d0.7AuLQ6zr9iXfbaTRCNKope",
     "p-4": "$2b$10$ZZEXROJcrzO451VNLuvh1OSJLqcku/8nqp8mZSKXxuzyfzeYW7jPa",
-    "p-1792038460738": "$2b$10$pqOsU/Y3ahXI9ofMmZt/We5Qe1EOZ3jgAJxAc301iTpO./DvQxBBq"
+    "p-1792038460738": "$2b$10$pqOsU/Y3ahXI9ofMmZt/We5Qe1EOZ3jgAJxAc301iTpO./DvQxBBq",
+    "p-founder-karmakount": "$2b$10$PJhSmmwnJb.9RuWfTTJbbuEgsS.t.mtYs5/McJie8f5yBpVPNpZ6W"
   },
   "deeds": [
     {
