@@ -42,8 +42,8 @@ export const TokenomicsModal: React.FC<TokenomicsModalProps> = ({
 
   const CONTRACT_ADDRESS = '0x86B544dE599644F616B722738b5702692C12dC6D';
   const BASESCAN_URL = 'https://basescan.org/address/0x86B544dE599644F616B722738b5702692C12dC6D';
-  const UNISWAP_URL = 'https://app.uniswap.org/positions/add/v3?chain=base&currency0=ETH&currency1=0x86B544dE599644F616B722738b5702692C12dC6D';
-  const DEXSCREENER_URL = 'https://dexscreener.com/base/0x86B544dE599644F616B722738b5702692C12dC6D';
+  const UNISWAP_URL = 'https://app.uniswap.org/swap?chain=base&outputCurrency=0x86B544dE599644F616B722738b5702692C12dC6D';
+  const DEXSCREENER_URL = 'https://dexscreener.com/base/0x26488Ef547cB8C7442a349e47f8f5a346a4F29bc';
 
   const handleCopyContract = () => {
     soundManager.playVirtueChime();
@@ -379,7 +379,7 @@ export const TokenomicsModal: React.FC<TokenomicsModalProps> = ({
                   className="px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 text-xs font-semibold text-white flex items-center justify-center gap-2 shadow-lg shadow-pink-500/20 transition-all"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
-                  <span>Seed Uniswap Pool</span>
+                  <span>Trade on Uniswap</span>
                 </a>
                 <a
                   href={DEXSCREENER_URL}

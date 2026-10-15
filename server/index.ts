@@ -1214,9 +1214,10 @@ app.get('/api/tokenomics', (_req, res) => {
       network: 'Base Mainnet (Chain ID 8453)',
       status: 'Live on Base Mainnet',
       contractAddress: '0x86B544dE599644F616B722738b5702692C12dC6D',
+      pairAddress: '0x26488Ef547cB8C7442a349e47f8f5a346a4F29bc',
       basescanUrl: 'https://basescan.org/address/0x86B544dE599644F616B722738b5702692C12dC6D',
-      uniswapPoolUrl: 'https://app.uniswap.org/positions/add/v3?chain=base&currency0=ETH&currency1=0x86B544dE599644F616B722738b5702692C12dC6D',
-      dexScreenerUrl: 'https://dexscreener.com/base/0x86B544dE599644F616B722738b5702692C12dC6D',
+      uniswapPoolUrl: 'https://app.uniswap.org/swap?chain=base&outputCurrency=0x86B544dE599644F616B722738b5702692C12dC6D',
+      dexScreenerUrl: 'https://dexscreener.com/base/0x26488Ef547cB8C7442a349e47f8f5a346a4F29bc',
       targetPairs: ['$KARMA / WETH', '$KARMA / USDC']
     }
   });
